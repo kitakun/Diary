@@ -1,0 +1,31 @@
+﻿@model Kitakun.TagDiary.ViewModels.Models.SpaceOwnerModels.CreateNewSpaceModel
+@using Kitakun.TagDiary.Core.Domain;
+@{
+    ViewData["Title"] = "CreateNew";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var enumValues = Kitakun.TagDiary.Extensions.ArrayExtensions.PrepareEnum<PrivacyProtectionType>(PrivacyProtectionType.VisibleByAll);
+}
+
+<div class="text-center">
+    <h1 class="display-4">Новый дневник</h1>
+</div>
+
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        @Html.LabelFor(x => x.UrlName, htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(x => x.UrlName, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.BlogPrivacy, htmlAttributes: new { @class = "control-label" })
+        @Html.DropDownListFor(x => x.BlogPrivacy, enumValues, htmlAttributes: new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.MasterPasswordHash, htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(x => x.MasterPasswordHash, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+}

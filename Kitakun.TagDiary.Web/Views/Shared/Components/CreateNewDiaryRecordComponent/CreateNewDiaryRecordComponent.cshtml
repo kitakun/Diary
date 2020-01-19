@@ -1,0 +1,108 @@
+﻿@model Kitakun.TagDiary.ViewModels.Models.Components.CreateNewDiaryRecordComponent.CreateNewDiaryRecordModel
+@using Kitakun.TagDiary.Core.Domain;
+@using Kitakun.TagDiary.Extensions;
+@using Kitakun.TagDiary.Web.Extensions;
+
+@{
+    Layout = null;
+    var enumValues = ArrayExtensions.PrepareEnum<PrivacyProtectionType>(PrivacyProtectionType.VisibleByAll);
+    var jsTagsData = Model.AllowedTags == null || Model.AllowedTags.Length == 0
+        ? string.Empty
+        : $"'{string.Join("','", Model.AllowedTags)}'";
+}
+
+<p>
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseCreateNewRecord" aria-expanded="false" aria-controls="collapseCreateNewRecord">
+        Создать запись
+    </button>
+</p>
+
+<div class="collapse" id="collapseCreateNewRecord">
+    <div>
+        @using (Html.BeginForm(
+           nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.CreateNewDiaryRecord),
+           ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(),
+           FormMethod.Post,
+           htmlAttributes: new { @id = "createNewDiaryForm" }))
+        {
+            <div class="form-group">
+                @Html.LabelFor(x => x.ShortDescription, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(x => x.ShortDescription, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(x => x.Tags, htmlAttributes: new { @class = "control-label" })
+                @Html.HiddenFor(x => x.TagInput,
+                new{ 
+                    @id = "hiddenTagInput"
+                })
+                <div class="tags-input" id="myTags">
+                    <span class="data container"></span>
+                    <span class="autocomplete">
+                        <input type="text">
+                        <div class="autocomplete-items"></div>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(x => x.MarkdownText, htmlAttributes: new { @class = "control-label" })
+                @Html.TextAreaFor(x => x.MarkdownText, htmlAttributes: new { @class = "form-control" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(x => x.Privacy, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(x => x.Privacy, enumValues, htmlAttributes: new { @class = "form-control" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(x => x.ProtectedByPassword, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(x => x.ProtectedByPassword, new { htmlAttributes = new { @class = " " } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(x => x.PasswordSource, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(x => x.PasswordSource, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            <button class="btn btn-primary" type="submit">Создать запись</button>
+        }
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    function runSuggestions(element, query) {
+        var tagItems = [@Html.Raw(jsTagsData)];
+
+        let sug_area = $(element).parents().eq(2).find('.autocomplete .autocomplete-items');
+        _tag_input_suggestions_data = tagItems;
+        $.each(tagItems, function (key, value) {
+            if (
+                value == query
+                || value.startsWith(query)
+                || value.endsWith(query)
+            ) {
+                let template = $("<div>" + value + "</div>").hide();
+                sug_area.append(template);
+                template.show();
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $(document).ready(function () {
+            $(window).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            $('#createNewDiaryForm').on('submit', function () {
+                $('#hiddenTagInput').val($.fn.tagsValues.apply($('#myTags')).join('|'));
+            });
+        });
+    });
+</script>

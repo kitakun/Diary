@@ -1,0 +1,45 @@
+﻿@model Kitakun.TagDiary.ViewModels.Models.SpaceOwnerModels.SpaceOwnerViewModel
+@{
+    ViewData["Title"] = "Записи";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.IsAdmin)
+{
+    @await Component.InvokeAsync(nameof(Kitakun.TagDiary.ViewModels.Models.Components.CreateNewDiaryRecordComponent))
+}
+
+@if (Model.Records == null || Model.Records.Length == 0)
+{
+    <div class="text-center">
+        <h2>Пусто</h2>
+        <p>Сейчас нет доступных записей</p>
+    </div>
+}
+else
+{
+    <div class="card-columns">
+        @for (var i = 0; i < Model.Records.Length; i++)
+        {
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Records[i].ShortDescriptionText</h5>
+                    <h6 class="card-subtitle mb-2 text-muted text-right">@Model.Records[i].CreatedAt.ToShortDateString()</h6>
+                    @if (Model.Records[i].Tags?.Length > 0)
+                    {
+                        for (var t = 0; t < Model.Records[i].Tags.Length; t++)
+                        {
+                            <span class="badge badge-primary">@Model.Records[i].Tags[t]</span>
+                        }
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Records[i].UrlToken))
+                    {
+                        <div>
+                            <a asp-area="" asp-controller="DiaryRecord" asp-action="Index" asp-route-recordKey="@Model.Records[i].UrlToken" class="float-right">Прочитать</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}

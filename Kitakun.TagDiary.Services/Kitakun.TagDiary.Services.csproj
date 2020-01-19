@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <Configurations>Debug;Release;Migrations</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kitakun.TagDiary.Core\Kitakun.TagDiary.Core.csproj" />
+    <ProjectReference Include="..\Kitakun.TagDiary.Persistance\Kitakun.TagDiary.Persistance.csproj" />
+    <ProjectReference Include="..\Kitakun.TagDiary.ViewModels\Kitakun.TagDiary.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>
