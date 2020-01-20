@@ -66,7 +66,8 @@
             int spaceId,
             bool isOwner,
             DiaryRecordsFiltersTypeEnum filterType = DiaryRecordsFiltersTypeEnum.ShowAvailable,
-            string[] tags = null)
+            string[] tags = null,
+            DateTime? dateFilter = null)
         {
             var query = _dbContext
                 .DiaryRecords
@@ -127,6 +128,14 @@
             {
                 query = query
                     .Where(w => w.Tags != null && tags.All(a => w.Tags.Contains(a)));
+            }
+
+            if (dateFilter.HasValue)
+            {
+                query = query
+                    .Where(w => w.CreatedAt.Year == dateFilter.Value.Year
+                        && w.CreatedAt.Month == dateFilter.Value.Month
+                        && w.CreatedAt.Day == dateFilter.Value.Day);
             }
 
             return query

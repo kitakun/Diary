@@ -7,5 +7,7 @@
         public DiaryRecordsFiltersTypeEnum PrivacyFilter { get; set; }
 
         public string TagInputString { get; set; }
+
+        public string DateFilter { get; set; }
     }
 }

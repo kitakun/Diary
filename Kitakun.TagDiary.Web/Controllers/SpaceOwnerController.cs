@@ -55,7 +55,8 @@
                 SpaceId = spaceId,
                 IsAdmin = _webContext.IsSpaceOwner,
                 Records = lastRecords.CastArray(_mapperService.Map<DiaryRecord, SpaceOwnerViewElementModel>),
-                AllTags = allTags
+                AllTags = allTags,
+                ResultsDate = DateTime.Now
             });
         }
 
@@ -74,13 +75,23 @@
 
             var allTags = await _tagsService.LoadAllTagsAsync(spaceId);
 
+            var parsedDateFilter = default(DateTime?);
+            if (!string.IsNullOrEmpty(filter.DateFilter))
+            {
+                var splittedDay = filter.DateFilter.Split(".");
+                parsedDateFilter = new DateTime(
+                    int.Parse(splittedDay[2]),
+                    int.Parse(splittedDay[1]) + 1,
+                    int.Parse(splittedDay[0]));
+            }
             var tagsFromFilter = _tagsService.ParseTags(filter.TagInputString);
             var lastRecords = await _diaryRecordService.LoadLastNRecordsAsync(
                 loadLastElementsCount,
                 spaceId,
                 _webContext.IsSpaceOwner,
                 filter.PrivacyFilter,
-                tagsFromFilter);
+                tagsFromFilter,
+                parsedDateFilter);
 
             return View(new SpaceOwnerViewModel
             {
@@ -88,6 +99,7 @@
                 IsAdmin = _webContext.IsSpaceOwner,
                 Records = lastRecords.CastArray(_mapperService.Map<DiaryRecord, SpaceOwnerViewElementModel>),
                 AllTags = allTags,
+                ResultsDate = parsedDateFilter ?? DateTime.Now,
                 Filter = filter
             });
         }

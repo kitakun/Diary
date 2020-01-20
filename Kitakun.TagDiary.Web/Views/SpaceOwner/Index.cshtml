@@ -13,7 +13,7 @@
         ? string.Empty
         : $"'{string.Join("','", existingTagsStringArray)}'";
     var enumValues = ArrayExtensions.PrepareEnum<DiaryRecordsFiltersTypeEnum>(DiaryRecordsFiltersTypeEnum.ShowAvailable);
-    var records = Model.Records.GroupBy(x => new { x.CreatedAt.Day, x.CreatedAt.Month, x.CreatedAt.Year });
+    var records = Model.Records?.GroupBy(x => new { x.CreatedAt.Day, x.CreatedAt.Month, x.CreatedAt.Year });
 }
 
 @if (Model.IsAdmin)
@@ -21,16 +21,19 @@
     @await Component.InvokeAsync(nameof(Kitakun.TagDiary.ViewModels.Models.Components.CreateNewDiaryRecordComponent))
 }
 
-@if (Model.Records == null || Model.Records.Length == 0)
-{
-    <div class="text-center">
-        <h2>Пусто</h2>
-        <p>Сейчас нет доступных записей</p>
-    </div>
-}
-else
-{
-    <div class="row">
+<div class="row">
+
+    @if (Model.Records == null || Model.Records.Length == 0)
+    {
+        <div class="col-9">
+            <div class="text-center">
+                <h2>Пусто</h2>
+                <p>На дату @Model.ResultsDate.ToString("dd.MM.yyyy") нет записей</p>
+            </div>
+        </div>
+    }
+    else
+    {
         <div class="col-9">
             @{
                 int prevDay = 0;
@@ -119,70 +122,73 @@ else
                     }
                 </div>
             }
-
-
         </div>
-        <div class="col-3 sidebar">
-            <div class="mini-submenu">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </div>
-            <div class="list-group">
+    }
 
-                @using (Html.BeginForm(
-                  nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.Index),
-                  ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(),
-                  FormMethod.Post,
-                  htmlAttributes: new { @id = "filterRecords" }))
-                {
+    <div class="col-3 sidebar">
+        <div class="mini-submenu">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </div>
+        <div class="list-group">
 
-                    <span href="#" class="list-group-item active text-center">
-                        <b>Фильтры</b>
-                        <span class="pull-right" id="slide-submenu">
-                            <i class="fa fa-times"></i>
-                        </span>
+            @using (Html.BeginForm(
+         nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.Index),
+         ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(),
+         FormMethod.Post,
+         htmlAttributes: new { @id = "filterRecords" }))
+            {
+
+                <span href="#" class="list-group-item active text-center">
+                    <b>Фильтры</b>
+                    <span class="pull-right" id="slide-submenu">
+                        <i class="fa fa-times"></i>
                     </span>
+                </span>
 
-                    <div class="list-group-item">
-                        <label>Теги</label>
-                        @Html.HiddenFor(x => x.Filter.TagInputString,
-                        new{
-                            @id = "hiddenFilterTagInput"
-                        })
-                        <div class="tags-input" id="filterTags">
-                            <span class="data container"></span>
-                            <span class="autocomplete">
-                                <input type="text">
-                                <div class="autocomplete-items"></div>
-                            </span>
+                <div class="list-group-item">
+                    <label>Теги</label>
+                    @Html.HiddenFor(x => x.Filter.TagInputString,
+                    new{
+                        @id = "hiddenFilterTagInput"
+                    })
+                    <div class="tags-input" id="filterTags">
+                        <span class="data container"></span>
+                        <span class="autocomplete">
+                            <input type="text">
+                            <div class="autocomplete-items"></div>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="list-group-item">
+                    @Html.HiddenFor(x => x.Filter.DateFilter,
+                    new{
+                        @id = "hiddenDateFilter"
+                    })
+                    <div class="calendar calendar-first" id="calendar_first">
+                        <div class="calendar_header">
+                            <button class="switch-month switch-left" type="button"> <span class="oi" data-glyph="caret-left"></span></button>
+                            <h2></h2>
+                            <button class="switch-month switch-right" type="button"> <span class="oi" data-glyph="caret-right"></span></button>
                         </div>
+                        <div class="calendar_weekdays"></div>
+                        <div class="calendar_content"></div>
                     </div>
+                </div>
 
-                    <div class="list-group-item">
-                        <div class="calendar calendar-first" id="calendar_first">
-                            <div class="calendar_header">
-                                <button class="switch-month switch-left"> <i class="fa fa-chevron-left"></i></button>
-                                <h2></h2>
-                                <button class="switch-month switch-right"> <i class="fa fa-chevron-right"></i></button>
-                            </div>
-                            <div class="calendar_weekdays"></div>
-                            <div class="calendar_content"></div>
-                        </div>
-                    </div>
+                <div class="list-group-item">
+                    @Html.DropDownListFor(x => x.Filter.PrivacyFilter, enumValues, htmlAttributes: new { @class = "form-control" })
+                </div>
 
-                    <div class="list-group-item">
-                        @Html.DropDownListFor(x => x.Filter.PrivacyFilter, enumValues, htmlAttributes: new { @class = "form-control" })
-                    </div>
-
-                    <div class="list-group-item">
-                        <button class="btn btn-primary col-12" type="submit">Применить</button>
-                    </div>
-                }
-            </div>
+                <div class="list-group-item">
+                    <button class="btn btn-primary col-12" type="submit">Применить</button>
+                </div>
+            }
         </div>
     </div>
-}
+</div>
 
 
 <script type="text/javascript">
@@ -222,8 +228,23 @@ else
                 tagsHolder.append(existingTemplate);
             }
 
+            @if (!string.IsNullOrEmpty(Model.Filter?.DateFilter))
+            {
+                @Html.Raw($"calendar_selected['{Model.ResultsDate.Year}'] = {{{Model.ResultsDate.Month - 1}: [{Model.ResultsDate.Day}] }};");
+                @Html.Raw("calendars.cal1.selectDates(window.calendar_selected);");
+            }
+
             $('#filterRecords').on('submit', function () {
                 $('#hiddenFilterTagInput').val($.fn.tagsValues.apply($('#filterTags')).join('|'));
+
+                var calendarKeys = Object.keys(calendar_selected);
+                if (calendarKeys && calendarKeys.length > 0) {
+                    var year = calendarKeys[0];
+                    var month = Object.keys(calendar_selected[year])[0];
+                    var day = calendar_selected[year][month][0];
+
+                    $('#hiddenDateFilter').val(day + '.' + month + '.' + year);
+                }
             });
         });
     });

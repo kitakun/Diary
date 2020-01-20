@@ -1,5 +1,6 @@
 ﻿namespace Kitakun.TagDiary.Core.Services
 {
+    using System;
     using System.Threading.Tasks;
 
     using Kitakun.TagDiary.Core.Domain;
@@ -14,7 +15,8 @@
             int spaceId,
             bool isOwner,
             DiaryRecordsFiltersTypeEnum filterType = DiaryRecordsFiltersTypeEnum.ShowAvailable,
-            string[] tags = null);
+            string[] tags = null,
+            DateTime? dateFilter = null);
 
         DiaryRecord LoadByToken(string recordKey);
     }
