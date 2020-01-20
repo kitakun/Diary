@@ -2,12 +2,12 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using Microsoft.EntityFrameworkCore;
 
     using Kitakun.TagDiary.Core.Services;
     using Kitakun.TagDiary.Persistance;
-    using System.Threading.Tasks;
 
     public class TagsService : ITagsService
     {
@@ -26,6 +26,14 @@
                     .Select(s => s.AllTagsInSpace)
                     .FirstOrDefault();
 
+        public Task<string[]> LoadAllTagsAsync(int spaceId) =>
+            _dbContext
+                .SpaceOwnerTags
+                .AsNoTracking()
+                .Where(w => w.SpaceId == spaceId)
+                .Select(s => s.AllTagsInSpace)
+                .FirstAsync();
+
         public string[] ParseTags(string tagInput) =>
             string.IsNullOrEmpty(tagInput)
                 ? default
@@ -42,7 +50,8 @@
             // load all unique tags
             var loadedUniqueTags = await _dbContext
                 .DiaryRecords
-                .Where(w => w.SpaceId == spaceId)
+                .Where(w => w.SpaceId == spaceId
+                    && w.Tags != null)
                 .SelectMany(sm => sm.Tags)
                 .Distinct()
                 .ToArrayAsync();

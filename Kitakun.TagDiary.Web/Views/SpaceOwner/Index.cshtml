@@ -1,7 +1,19 @@
 ﻿@model Kitakun.TagDiary.ViewModels.Models.SpaceOwnerModels.SpaceOwnerViewModel
+@using Kitakun.TagDiary.Core.Domain.DiaryRecords;
+@using Kitakun.TagDiary.Extensions;
+@using Kitakun.TagDiary.Web.Extensions;
 @{
     ViewData["Title"] = "Записи";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var jsTagsData = Model.AllTags == null || Model.AllTags.Length == 0
+        ? string.Empty
+        : $"'{string.Join("','", Model.AllTags)}'";
+    var existingTagsStringArray = Model.Filter?.TagInputString?.Split("|");
+    var existingTags = existingTagsStringArray == null || existingTagsStringArray.Length == 0
+        ? string.Empty
+        : $"'{string.Join("','", existingTagsStringArray)}'";
+    var enumValues = ArrayExtensions.PrepareEnum<DiaryRecordsFiltersTypeEnum>(DiaryRecordsFiltersTypeEnum.ShowAvailable);
+    var records = Model.Records.GroupBy(x => new { x.CreatedAt.Day, x.CreatedAt.Month, x.CreatedAt.Year });
 }
 
 @if (Model.IsAdmin)
@@ -18,28 +30,201 @@
 }
 else
 {
-    <div class="card-columns">
-        @for (var i = 0; i < Model.Records.Length; i++)
-        {
-            <div class="card" style="width: 18rem;">
-                <div class="card-body">
-                    <h5 class="card-title">@Model.Records[i].ShortDescriptionText</h5>
-                    <h6 class="card-subtitle mb-2 text-muted text-right">@Model.Records[i].CreatedAt.ToShortDateString()</h6>
-                    @if (Model.Records[i].Tags?.Length > 0)
+    <div class="row">
+        <div class="col-9">
+            @{
+                int prevDay = 0;
+                int prevMonth = 0;
+                int prevYear = 0;
+                bool isFirst = true;
+                bool hasChages = false;
+            }
+            @foreach (var groupKey in records)
+            {
+                if (isFirst)
+                {
+                    prevDay = groupKey.Key.Day;
+                    prevMonth = groupKey.Key.Month;
+                    prevYear = groupKey.Key.Year;
+                    isFirst = false;
+                    <div class="separator">Сегодня</div>
+                }
+                else
+                {
+                    if (prevDay != groupKey.Key.Day)
                     {
-                        for (var t = 0; t < Model.Records[i].Tags.Length; t++)
-                        {
-                            <span class="badge badge-primary">@Model.Records[i].Tags[t]</span>
-                        }
+                        hasChages = true;
+                        prevDay = groupKey.Key.Day;
                     }
-                    @if (!string.IsNullOrEmpty(Model.Records[i].UrlToken))
+                    if (prevMonth != groupKey.Key.Month)
                     {
-                        <div>
-                            <a asp-area="" asp-controller="DiaryRecord" asp-action="Index" asp-route-recordKey="@Model.Records[i].UrlToken" class="float-right">Прочитать</a>
+                        hasChages = true;
+                        prevMonth = groupKey.Key.Month;
+                    }
+                    if (prevYear != groupKey.Key.Year)
+                    {
+                        hasChages = true;
+                        prevYear = groupKey.Key.Year;
+                    }
+
+                    if (hasChages)
+                    {
+                        <div class="separator">@($"{groupKey.Key.Day}.{groupKey.Key.Month}.{groupKey.Key.Year}")</div>
+                        hasChages = false;
+                    }
+                }
+
+                var recordsFromGroup = groupKey.ToArray();
+                <div class="card-columns">
+                    @for (var i = 0; i < recordsFromGroup.Length; i++)
+                    {
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">@recordsFromGroup[i].ShortDescriptionText</h5>
+                                <h6 class="card-subtitle mb-2 text-muted text-right">@recordsFromGroup[i].CreatedAt.ToShortDateString()</h6>
+                                @if (recordsFromGroup[i].Tags?.Length > 0)
+                                {
+                                    for (var t = 0; t < recordsFromGroup[i].Tags.Length; t++)
+                                    {
+                                        <span class="badge badge-primary">@recordsFromGroup[i].Tags[t]</span>
+                                    }
+                                }
+
+                                @if (!string.IsNullOrEmpty(recordsFromGroup[i].UrlToken))
+                                {
+                                    <div class="float-right">
+                                        <a asp-area="" asp-controller="DiaryRecord" asp-action="Index" asp-route-recordKey="@recordsFromGroup[i].UrlToken">Прочитать</a>
+                                        @if (recordsFromGroup[i].HasPassword)
+                                        {
+                                            <span class="oi" data-glyph="lock-locked"></span>
+                                        }
+                                        else
+                                        {
+                                            @switch (recordsFromGroup[i].Privacy)
+                                            {
+                                                case Kitakun.TagDiary.Core.Domain.PrivacyProtectionType.VisibleByMasterPassword:
+                                                    <span class="oi" data-glyph="lock-unlocked"></span>
+                                                    break;
+                                                case Kitakun.TagDiary.Core.Domain.PrivacyProtectionType.VisibleByLink:
+                                                    <span class="oi" data-glyph="globe"></span>
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                        }
+                                    </div>
+                                }
+                            </div>
                         </div>
                     }
                 </div>
+            }
+
+
+        </div>
+        <div class="col-3 sidebar">
+            <div class="mini-submenu">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
             </div>
-        }
+            <div class="list-group">
+
+                @using (Html.BeginForm(
+                  nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.Index),
+                  ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(),
+                  FormMethod.Post,
+                  htmlAttributes: new { @id = "filterRecords" }))
+                {
+
+                    <span href="#" class="list-group-item active text-center">
+                        <b>Фильтры</b>
+                        <span class="pull-right" id="slide-submenu">
+                            <i class="fa fa-times"></i>
+                        </span>
+                    </span>
+
+                    <div class="list-group-item">
+                        <label>Теги</label>
+                        @Html.HiddenFor(x => x.Filter.TagInputString,
+                        new{
+                            @id = "hiddenFilterTagInput"
+                        })
+                        <div class="tags-input" id="filterTags">
+                            <span class="data container"></span>
+                            <span class="autocomplete">
+                                <input type="text">
+                                <div class="autocomplete-items"></div>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="list-group-item">
+                        <div class="calendar calendar-first" id="calendar_first">
+                            <div class="calendar_header">
+                                <button class="switch-month switch-left"> <i class="fa fa-chevron-left"></i></button>
+                                <h2></h2>
+                                <button class="switch-month switch-right"> <i class="fa fa-chevron-right"></i></button>
+                            </div>
+                            <div class="calendar_weekdays"></div>
+                            <div class="calendar_content"></div>
+                        </div>
+                    </div>
+
+                    <div class="list-group-item">
+                        @Html.DropDownListFor(x => x.Filter.PrivacyFilter, enumValues, htmlAttributes: new { @class = "form-control" })
+                    </div>
+
+                    <div class="list-group-item">
+                        <button class="btn btn-primary col-12" type="submit">Применить</button>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 }
+
+
+<script type="text/javascript">
+
+    function runSuggestions(element, query) {
+        var tagItems = [@Html.Raw(jsTagsData)];
+
+        let sug_area = $(element).parents().eq(2).find('.autocomplete .autocomplete-items');
+        _tag_input_suggestions_data = tagItems;
+        $.each(tagItems, function (key, value) {
+            if (
+                value == query
+                || value.startsWith(query)
+                || value.endsWith(query)
+            ) {
+                let template = $("<div>" + value + "</div>").hide();
+                sug_area.append(template);
+                template.show();
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $(document).ready(function () {
+            $(window).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            var existingTags = [@Html.Raw(existingTags)];
+
+            var tagsHolder = $('#filterTags').find('.container');
+            for (var i = 0; i < existingTags.length; i++) {
+                var existingTemplate = '<span class="tag"><span class="text" _value="' + existingTags[i] + '">' + existingTags[i] + '</span><span class="close">×</span></span>';
+                tagsHolder.append(existingTemplate);
+            }
+
+            $('#filterRecords').on('submit', function () {
+                $('#hiddenFilterTagInput').val($.fn.tagsValues.apply($('#filterTags')).join('|'));
+            });
+        });
+    });
+</script>

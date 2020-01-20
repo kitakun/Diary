@@ -18,5 +18,7 @@ namespace Kitakun.TagDiary.Core.Services
         /// Save unique tags in SpaceOwner entity
         /// </summary>
         Task UpdateAllTags(int spaceId, string[] nonSavedTags = null);
+
+        Task<string[]> LoadAllTagsAsync(int spaceId);
     }
 }

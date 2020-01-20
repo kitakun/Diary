@@ -6,6 +6,8 @@
     <title>@ViewData["Title"] - Kitakun.TagDiary.Web</title>
 
     <link rel="stylesheet" href="~/lib/tags-input-autocomplete-ajax/tags.css" />
+    <link rel="stylesheet" href="~/lib/open-iconic-master/font/css/open-iconic-bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/open-iconic-master/font/css/open-iconic.min.css" />
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     </environment>
@@ -18,6 +20,7 @@
     </environment>
 
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/calendar.css" />
 </head>
 <body>
     <header>
@@ -71,6 +74,7 @@
         </script>
     </environment>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/Calendar.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

@@ -10,6 +10,7 @@
     using Kitakun.TagDiary.Core.Domain;
     using Kitakun.TagDiary.Core.Services;
     using Kitakun.TagDiary.Persistance;
+    using Kitakun.TagDiary.Core.Domain.DiaryRecords;
 
     public class DiaryRecordService : IDiaryRecordService
     {
@@ -38,7 +39,7 @@
                 entity.ShortDescription = _ecnrypter.Encrypt(password, entity.ShortDescription);
                 entity.MarkdownText = _ecnrypter.Encrypt(password, entity.MarkdownText);
             }
-            else if(entity.ProtectedByPassword)
+            else if (entity.ProtectedByPassword)
             {
                 throw new ArgumentException($"Включили защиту паролем, сам пароль не ввели");
             }
@@ -60,22 +61,74 @@
             return Token;
         }
 
-        public Task<DiaryRecord[]> LoadLastNRecordsAsync(int lastElementsCount, int spaceId, bool isOwner)
+        public Task<DiaryRecord[]> LoadLastNRecordsAsync(
+            int lastElementsCount,
+            int spaceId,
+            bool isOwner,
+            DiaryRecordsFiltersTypeEnum filterType = DiaryRecordsFiltersTypeEnum.ShowAvailable,
+            string[] tags = null)
         {
             var query = _dbContext
                 .DiaryRecords
                 .AsNoTracking();
+
             if (isOwner)
             {
-                query = query
-                    .Where(w => w.SpaceId == spaceId);
+                switch (filterType)
+                {
+                    case DiaryRecordsFiltersTypeEnum.ShowAvailable:
+                        query = query
+                            .Where(w => w.SpaceId == spaceId
+                                && w.Privacy == PrivacyProtectionType.VisibleByAll
+                                && w.ProtectedByPassword == false);
+                        break;
+                    case DiaryRecordsFiltersTypeEnum.ShowAvailableWithPasswordProtection:
+                        query = query
+                            .Where(w => w.SpaceId == spaceId
+                                && w.Privacy == PrivacyProtectionType.VisibleByAll);
+                        break;
+                    case DiaryRecordsFiltersTypeEnum.ShowProtectedWithPassword:
+                        query = query
+                            .Where(w => w.SpaceId == spaceId
+                                && w.Privacy == PrivacyProtectionType.VisibleByAll
+                                && w.ProtectedByPassword);
+                        break;
+                    default:
+                        throw new NotImplementedException($"Type {filterType} not implemented for some reason");
+                }
             }
             else
             {
-                query = query
-                    .Where(w => w.SpaceId == spaceId
-                        && w.Privacy == PrivacyProtectionType.VisibleByAll);
+                switch (filterType)
+                {
+                    case DiaryRecordsFiltersTypeEnum.ShowAvailable:
+                        query = query
+                            .Where(w => w.SpaceId == spaceId
+                                && w.Privacy == PrivacyProtectionType.VisibleByAll
+                                && w.ProtectedByPassword == false);
+                        break;
+                    case DiaryRecordsFiltersTypeEnum.ShowAvailableWithPasswordProtection:
+                        query = query
+                            .Where(w => w.SpaceId == spaceId
+                                && w.Privacy == PrivacyProtectionType.VisibleByAll);
+                        break;
+                    case DiaryRecordsFiltersTypeEnum.ShowProtectedWithPassword:
+                        query = query
+                            .Where(w => w.SpaceId == spaceId
+                                && w.Privacy == PrivacyProtectionType.VisibleByAll
+                                && w.ProtectedByPassword);
+                        break;
+                    default:
+                        throw new NotImplementedException($"Type {filterType} not implemented for some reason");
+                }
             }
+
+            if (tags != null && tags.Length > 0)
+            {
+                query = query
+                    .Where(w => w.Tags != null && tags.All(a => w.Tags.Contains(a)));
+            }
+
             return query
                 .OrderByDescending(x => x.CreatedAt)
                 .Take(lastElementsCount)

@@ -20,7 +20,8 @@
                     HasPassword = dRecord.ProtectedByPassword,
                     ShortDescriptionText = dRecord.ShortDescription,
                     UrlToken = dRecord.TokenUrl,
-                    Tags = dRecord.Tags
+                    Tags = dRecord.Tags,
+                    Privacy = dRecord.Privacy
                 };
                 return result;
             }

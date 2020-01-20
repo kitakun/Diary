@@ -47,13 +47,48 @@
 
             const int loadLastElementsCount = 25;
 
+            var allTags = await _tagsService.LoadAllTagsAsync(spaceId);
             var lastRecords = await _diaryRecordService.LoadLastNRecordsAsync(loadLastElementsCount, spaceId, _webContext.IsSpaceOwner);
 
             return View(new SpaceOwnerViewModel
             {
                 SpaceId = spaceId,
                 IsAdmin = _webContext.IsSpaceOwner,
-                Records = lastRecords.CastArray(_mapperService.Map<DiaryRecord, SpaceOwnerViewElementModel>)
+                Records = lastRecords.CastArray(_mapperService.Map<DiaryRecord, SpaceOwnerViewElementModel>),
+                AllTags = allTags
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index([FromForm]SpaceOwnerIndexFilterModel filter)
+        {
+            var urlPart = _webContext.CurrentSpaceUrlPrefix;
+            if (string.IsNullOrEmpty(urlPart))
+            {
+                return RedirectToAction(nameof(HomeController.Index), ControllerExtensions.GetControllerName<HomeController>());
+            }
+
+            var spaceId = await _spaceOwnerService.GetSpaceOwnerIdByUrlAsync(urlPart);
+
+            const int loadLastElementsCount = 25;
+
+            var allTags = await _tagsService.LoadAllTagsAsync(spaceId);
+
+            var tagsFromFilter = _tagsService.ParseTags(filter.TagInputString);
+            var lastRecords = await _diaryRecordService.LoadLastNRecordsAsync(
+                loadLastElementsCount,
+                spaceId,
+                _webContext.IsSpaceOwner,
+                filter.PrivacyFilter,
+                tagsFromFilter);
+
+            return View(new SpaceOwnerViewModel
+            {
+                SpaceId = spaceId,
+                IsAdmin = _webContext.IsSpaceOwner,
+                Records = lastRecords.CastArray(_mapperService.Map<DiaryRecord, SpaceOwnerViewElementModel>),
+                AllTags = allTags,
+                Filter = filter
             });
         }
 
