@@ -5,6 +5,7 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <LangVersion>7.3</LangVersion>
     <Configurations>Debug;Release;Migrations</Configurations>
+    <TypeScriptToolsVersion>3.5</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -14,6 +15,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Migrations|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;MIGRATION</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\lib\octicons-master\**" />
+    <Content Remove="wwwroot\lib\octicons-master\**" />
+    <EmbeddedResource Remove="wwwroot\lib\octicons-master\**" />
+    <None Remove="wwwroot\lib\octicons-master\**" />
+  </ItemGroup>
 
 
   <ItemGroup>
@@ -31,5 +39,22 @@
     <ProjectReference Include="..\Kitakun.TagDiary.Services\Kitakun.TagDiary.Services.csproj" />
     <ProjectReference Include="..\Kitakun.TagDiary.ViewModels\Kitakun.TagDiary.ViewModels.csproj" />
   </ItemGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptModuleKind />
+    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>True</TypeScriptNoImplicitAny>
+    <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>False</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
 
 </Project>
