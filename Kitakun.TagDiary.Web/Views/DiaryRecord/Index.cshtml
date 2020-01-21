@@ -40,12 +40,9 @@
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function () {
         $(document).ready(function () {
-
-            $('#fullMarkdown').markdown({
-                autofocus: false,
-                savable: false,
-                iconlibrary: 'fa-5'
-            });
+            var converter = new showdown.Converter();
+            document.getElementById('fullMarkdown').innerHTML =
+                converter.makeHtml($('#fullMarkdown').html().trim());
 
             insertParam('recordKey', '@Model.TokenUrl');
         });

@@ -47,7 +47,7 @@
 
             <div class="form-group">
                 @Html.LabelFor(x => x.MarkdownText, htmlAttributes: new { @class = "control-label" })
-                @Html.TextAreaFor(x => x.MarkdownText, htmlAttributes: new { @class = "form-control" })
+                @Html.TextAreaFor(x => x.MarkdownText, htmlAttributes: new { @class = "form-control", @id="markdownInput" })
             </div>
 
             <div class="form-group">
@@ -94,9 +94,19 @@
     document.addEventListener('DOMContentLoaded', function () {
         $(document).ready(function () {
             $(window).keydown(function (event) {
-                if (event.keyCode == 13) {
+                if (event.keyCode == 13 && ($(event.target)[0] != $("textarea")[0])) {
                     event.preventDefault();
                     return false;
+                }
+            });
+
+            $('#markdownInput').markdown({
+                autofocus: false,
+                savable: false,
+                iconlibrary: 'fa-5',
+                onChange: function (e) {
+                    var content = e.parseContent();
+                    $('#markdownInput').html(content.trim());
                 }
             });
 
