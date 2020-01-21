@@ -1,10 +1,16 @@
 ﻿namespace Kitakun.TagDiary.Core.Domain
 {
+    using System;
     using System.Collections.Generic;
 
     public class SpaceOwner : IEntity
     {
         public int Id { get; set; }
+
+        /// <summary>
+        /// Human readable name
+        /// </summary>
+        public string HumanName { get; set; }
 
         /// <summary>
         /// Web url part http://www.{blog}.diary.com/
@@ -20,6 +26,8 @@
         /// Password for blog access (if we have protected by password privacy)
         /// </summary>
         public string MasterPasswordHash { get; set; }
+
+        public DateTime LastRecordDoneAt { get; set; }
 
         public virtual ICollection<DiaryRecord> Records { get; set; }
 

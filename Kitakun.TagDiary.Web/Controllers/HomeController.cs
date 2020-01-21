@@ -6,6 +6,7 @@
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Diagnostics;
+    using Microsoft.Extensions.Caching.Memory;
 
     using Kitakun.TagDiary.Core.Services;
     using Kitakun.TagDiary.Web.Extensions;
@@ -15,13 +16,16 @@
     {
         private readonly IWebContext _webContext;
         private readonly ISpaceOwnerService _spaceOwnerService;
+        private readonly IMemoryCache _memCache;
 
         public HomeController(
             IWebContext webContext,
-            ISpaceOwnerService spaceOwnerService)
+            ISpaceOwnerService spaceOwnerService,
+            IMemoryCache memCache)
         {
             _webContext = webContext ?? throw new ArgumentNullException(nameof(webContext));
             _spaceOwnerService = spaceOwnerService ?? throw new ArgumentNullException(nameof(spaceOwnerService));
+            _memCache = memCache ?? throw new ArgumentNullException(nameof(memCache));
         }
 
         [HttpGet]
@@ -44,7 +48,13 @@
             }
             else
             {
-                return View();
+                var existingBlogs = await _memCache.GetOrCreateAsync(nameof(_spaceOwnerService.NewestBlogsAsync),
+                    (e) =>
+                    {
+                        e.SetAbsoluteExpiration(new TimeSpan(0, 30, 0));
+                        return _spaceOwnerService.NewestBlogsAsync();
+                    });
+                return View(existingBlogs);
             }
         }
 

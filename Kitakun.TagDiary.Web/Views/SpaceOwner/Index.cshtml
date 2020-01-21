@@ -144,17 +144,14 @@
         <div class="list-group">
 
             @using (Html.BeginForm(
-         nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.Index),
-         ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(),
-         FormMethod.Post,
-         htmlAttributes: new { @id = "filterRecords" }))
+                 nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.Index),
+                 ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(),
+                 FormMethod.Post,
+                 htmlAttributes: new { @id = "filterRecords" }))
             {
 
                 <span href="#" class="list-group-item active text-center">
                     <b>Фильтры</b>
-                    <span class="pull-right" id="slide-submenu">
-                        <i class="fa fa-times"></i>
-                    </span>
                 </span>
 
                 <div class="list-group-item">

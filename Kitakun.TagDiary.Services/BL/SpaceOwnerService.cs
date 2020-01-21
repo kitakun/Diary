@@ -35,6 +35,8 @@
 
         public Task CreateNewSpaceOwnerAsync(SpaceOwner entity)
         {
+            entity.LastRecordDoneAt = DateTime.MinValue;
+
             _dbContext.SpaceOwners.Add(entity);
 
             _dbContext.SpaceOwnerTags.Add(new SpaceOwnerTags
@@ -45,5 +47,14 @@
 
             return _dbContext.SaveChangesAsync();
         }
+
+        public Task<SpaceOwner[]> NewestBlogsAsync() =>
+            _dbContext
+                .SpaceOwners
+                .AsNoTracking()
+                .Where(w => w.BlogPrivacy == PrivacyProtectionType.VisibleByAll)
+                .OrderByDescending(x => x.LastRecordDoneAt)
+                .Take(25)
+                .ToArrayAsync();
     }
 }

@@ -61,9 +61,17 @@ namespace Kitakun.TagDiary.Persistance.Migrations
 
                     b.Property<byte>("BlogPrivacy");
 
+                    b.Property<string>("HumanName")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("LastRecordDoneAt");
+
                     b.Property<string>("MasterPasswordHash");
 
-                    b.Property<string>("UrlName");
+                    b.Property<string>("UrlName")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 

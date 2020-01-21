@@ -11,5 +11,7 @@
         Task<int> GetSpaceOwnerIdByUrlAsync(string url);
 
         Task CreateNewSpaceOwnerAsync(SpaceOwner entity);
+
+        Task<SpaceOwner[]> NewestBlogsAsync();
     }
 }

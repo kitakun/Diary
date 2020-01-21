@@ -6,6 +6,9 @@
 
     public class CreateNewSpaceModel
     {
+        [Display(Name = "Краткое описание или имя")]
+        public string HumanName { get; set; }
+
         [Display(Name = "Web путь")]
         public string UrlName { get; set; }
 

@@ -114,7 +114,8 @@
             {
                 BlogPrivacy = model.BlogPrivacy,
                 MasterPasswordHash = model.MasterPasswordHash,
-                UrlName = model.UrlName.ToLower()
+                UrlName = model.UrlName.ToLower(),
+                HumanName = model.HumanName
             };
 
             await _spaceOwnerService.CreateNewSpaceOwnerAsync(newEntity);
@@ -147,5 +148,9 @@
 
             return RedirectToAction(nameof(SpaceOwnerController.Index));
         }
+
+        [HttpGet]
+        public IActionResult RedirectToSub([FromQuery] string key) =>
+            new RedirectResult(Request.RedirectToSubdomain(key), false);
     }
 }
