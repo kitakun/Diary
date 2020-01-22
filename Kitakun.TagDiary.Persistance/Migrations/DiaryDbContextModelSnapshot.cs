@@ -61,6 +61,8 @@ namespace Kitakun.TagDiary.Persistance.Migrations
 
                     b.Property<byte>("BlogPrivacy");
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("HumanName")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
@@ -73,7 +75,12 @@ namespace Kitakun.TagDiary.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
+                    b.Property<int>("UserOwnerId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserOwnerId")
+                        .IsUnique();
 
                     b.ToTable("SpaceOwners");
                 });
@@ -96,6 +103,40 @@ namespace Kitakun.TagDiary.Persistance.Migrations
                     b.ToTable("SpaceOwnerTags");
                 });
 
+            modelBuilder.Entity("Kitakun.TagDiary.Core.Domain.Users.DiaryUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("RegisteredAt");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DiaryUsers");
+                });
+
+            modelBuilder.Entity("Kitakun.TagDiary.Core.Domain.Users.DiaryUserExternalDataEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ExternaluserId")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("ProviderName")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<int>("UserOwnerId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserOwnerId");
+
+                    b.ToTable("DiaryUserExternalDataEntities");
+                });
+
             modelBuilder.Entity("Kitakun.TagDiary.Core.Domain.DiaryRecord", b =>
                 {
                     b.HasOne("Kitakun.TagDiary.Core.Domain.SpaceOwner", "SpaceOwner")
@@ -104,11 +145,27 @@ namespace Kitakun.TagDiary.Persistance.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Kitakun.TagDiary.Core.Domain.SpaceOwner", b =>
+                {
+                    b.HasOne("Kitakun.TagDiary.Core.Domain.Users.DiaryUser", "UserOwner")
+                        .WithOne()
+                        .HasForeignKey("Kitakun.TagDiary.Core.Domain.SpaceOwner", "UserOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Kitakun.TagDiary.Core.Domain.SpaceOwnerTags", b =>
                 {
                     b.HasOne("Kitakun.TagDiary.Core.Domain.SpaceOwner", "SpaceOwner")
                         .WithOne("SpaceOwnerTagsEntity")
                         .HasForeignKey("Kitakun.TagDiary.Core.Domain.SpaceOwnerTags", "SpaceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Kitakun.TagDiary.Core.Domain.Users.DiaryUserExternalDataEntity", b =>
+                {
+                    b.HasOne("Kitakun.TagDiary.Core.Domain.Users.DiaryUser", "User")
+                        .WithMany("ExternalLogins")
+                        .HasForeignKey("UserOwnerId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using Kitakun.TagDiary.Core.Domain.Users;
+
     public class SpaceOwner : IEntity
     {
         public int Id { get; set; }
@@ -28,6 +30,12 @@
         public string MasterPasswordHash { get; set; }
 
         public DateTime LastRecordDoneAt { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public int UserOwnerId { get; set; }
+
+        public virtual DiaryUser UserOwner { get; set; }
 
         public virtual ICollection<DiaryRecord> Records { get; set; }
 

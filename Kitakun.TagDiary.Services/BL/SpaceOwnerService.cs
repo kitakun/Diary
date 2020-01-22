@@ -36,6 +36,7 @@
         public Task CreateNewSpaceOwnerAsync(SpaceOwner entity)
         {
             entity.LastRecordDoneAt = DateTime.MinValue;
+            entity.CreatedAt = DateTime.UtcNow;
 
             _dbContext.SpaceOwners.Add(entity);
 

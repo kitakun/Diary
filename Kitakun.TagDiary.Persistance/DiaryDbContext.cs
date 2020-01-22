@@ -10,6 +10,7 @@
     using Microsoft.Extensions.Logging.Console;
 
     using Kitakun.TagDiary.Core.Domain;
+    using Kitakun.TagDiary.Core.Domain.Users;
 
     public sealed class DiaryDbContext : DbContext, IDiaryDbContext
     {
@@ -29,6 +30,10 @@
         public DbSet<DiaryRecord> DiaryRecords { get; set; }
 
         public DbSet<SpaceOwnerTags> SpaceOwnerTags { get; set; }
+
+        public DbSet<DiaryUser> DiaryUsers { get; set; }
+
+        public DbSet<DiaryUserExternalDataEntity> DiaryUserExternalDataEntities { get; set; }
 
 #if !(MIGRATION)
         public DiaryDbContext(IConfiguration config)

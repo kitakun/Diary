@@ -110,12 +110,15 @@
         [HttpPost]
         public async Task<IActionResult> CreateNew([FromForm] CreateNewSpaceModel model)
         {
+            var userId = int.Parse(HttpContext.User.Identity.Name);
+
             var newEntity = new SpaceOwner
             {
                 BlogPrivacy = model.BlogPrivacy,
                 MasterPasswordHash = model.MasterPasswordHash,
                 UrlName = model.UrlName.ToLower(),
-                HumanName = model.HumanName
+                HumanName = model.HumanName,
+                UserOwnerId = userId
             };
 
             await _spaceOwnerService.CreateNewSpaceOwnerAsync(newEntity);

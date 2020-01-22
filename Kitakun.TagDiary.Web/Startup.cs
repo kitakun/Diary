@@ -8,8 +8,10 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.AspNetCore.Identity;
 
     using Kitakun.TagDiary.Web.Infrastructure;
 
@@ -33,12 +35,23 @@
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.AccessDeniedPath = "/Auth/AccessDenied";
+                    options.LoginPath = "/Auth/LoginPage";
+                    options.Cookie.Name = "Diary.AuthCookieAspNetCore";
+                });
         }
 
         public void ConfigureContainer(ContainerBuilder builder) => builder.Configurate();
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseCookiePolicy();
+            app.UseAuthentication();
+
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -55,13 +68,17 @@
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
-            app.UseCookiePolicy();
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "auth",
+                    template: "externalAuth/{providerName}",
+                    defaults: new { controller = "Auth", action = "ExternalAuth" });
             });
         }
     }

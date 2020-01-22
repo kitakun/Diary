@@ -18,7 +18,14 @@
         </ol>
     </div>
     <div>
-        <a class="nav-link" asp-area="" asp-controller="SpaceOwner" asp-action="CreateNew">Создать свой дневник</a>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a class="nav-link" asp-area="" asp-controller="SpaceOwner" asp-action="CreateNew">Создать свой дневник</a>
+        }
+        else
+        {
+            <span class="text-muted">Для создания дневника войдите в систему</span>
+        }
     </div>
 </div>
 

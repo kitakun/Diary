@@ -1656,6 +1656,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\Kitakun.ExternalLogin.Vk\Kitakun.ExternalLogin.Vk.csproj" />
     <ProjectReference Include="..\Kitakun.TagDiary.Core\Kitakun.TagDiary.Core.csproj" />
     <ProjectReference Include="..\Kitakun.TagDiary.Persistance\Kitakun.TagDiary.Persistance.csproj" />
     <ProjectReference Include="..\Kitakun.TagDiary.Services\Kitakun.TagDiary.Services.csproj" />

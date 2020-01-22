@@ -5,6 +5,8 @@
     using Microsoft.AspNetCore.Http;
 
     using Kitakun.TagDiary.Core.Services;
+    using Kitakun.TagDiary.Web.Services;
+    using Kitakun.ExternalLogin.Abstraction;
 
     public class WebModule : Module
     {
@@ -12,7 +14,7 @@
         {
             builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>().SingleInstance();
             builder.RegisterType<WebContext>().As<IWebContext>().InstancePerLifetimeScope();
-            //builder.RegisterType<UserProvider>().As<IUserProvider>().InstancePerLifetimeScope();
+            builder.RegisterType<AuthService>().As<IAuthService>().InstancePerLifetimeScope();
         }
     }
 }
