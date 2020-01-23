@@ -44,7 +44,9 @@
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) =>
             options
+#if DEBUG
                 .UseLoggerFactory(MyLoggerFactory)
+#endif
 #if MIGRATION
                 .UseNpgsql("User ID=migrator;Password=migrator;Host=localhost;Port=5432;Database=diary;Pooling=true;");
 #else
