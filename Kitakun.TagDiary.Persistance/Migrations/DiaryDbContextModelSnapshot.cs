@@ -71,8 +71,7 @@ namespace Kitakun.TagDiary.Persistance.Migrations
 
                     b.Property<DateTime>("LastRecordDoneAt");
 
-                    b.Property<string>("MasterPasswordHash")
-                        .IsRequired();
+                    b.Property<string>("MasterPasswordHash");
 
                     b.Property<string>("UrlName")
                         .IsRequired()

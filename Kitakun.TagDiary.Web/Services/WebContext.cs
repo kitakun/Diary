@@ -33,7 +33,7 @@
                 return string.Empty;
             });
 
-            _isSpaceOwner = new Lazy<bool>(() => false);
+            _isSpaceOwner = new Lazy<bool>(() => true);
         }
     }
 }

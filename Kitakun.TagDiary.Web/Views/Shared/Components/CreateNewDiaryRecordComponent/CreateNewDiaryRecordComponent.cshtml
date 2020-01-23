@@ -47,7 +47,12 @@
 
             <div class="form-group">
                 @Html.LabelFor(x => x.MarkdownText, htmlAttributes: new { @class = "control-label" })
-                @Html.TextAreaFor(x => x.MarkdownText, htmlAttributes: new { @class = "form-control", @id="markdownInput" })
+                @Html.HiddenFor(x => x.MarkdownText,
+                new{
+                    @id = "hiddenMarkdownInput"
+                })
+                <div id="markdownInput">
+                </div>
             </div>
 
             <div class="form-group">
@@ -100,17 +105,21 @@
                 }
             });
 
-            $('#markdownInput').markdown({
-                autofocus: false,
-                savable: false,
-                iconlibrary: 'fa-5',
-                onChange: function (e) {
-                    var content = e.parseContent();
-                    $('#markdownInput').html(content.trim());
-                }
+            var createNewRecordQuill = new Quill('#markdownInput', {
+                modules: {
+                    toolbar: [
+                        [{ header: [1, 2, false] }],
+                        ['bold', 'italic', 'underline'],
+                        ['code-block', 'link', 'blockquote',],
+                        [{ list: 'ordered' }, { list: 'bullet' }]
+                    ]
+                },
+                placeholder: 'Введите текст...',
+                theme: 'snow'
             });
 
             $('#createNewDiaryForm').on('submit', function () {
+                $('#hiddenMarkdownInput').val(JSON.stringify(createNewRecordQuill.getContents()));
                 $('#hiddenTagInput').val($.fn.tagsValues.apply($('#myTags')).join('|'));
             });
         });

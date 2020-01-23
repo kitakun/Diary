@@ -1,6 +1,4 @@
 ﻿@model Kitakun.TagDiary.Core.Domain.DiaryRecord;
-@using Kitakun.TagDiary.Core.Domain;
-@using Kitakun.TagDiary.Extensions;
 @using Kitakun.TagDiary.Web.Extensions;
 @{
     ViewData["Title"] = "Index";
@@ -15,10 +13,10 @@
         </div>
         <div class="col-2">
             @using (Html.BeginForm(
-              nameof(Kitakun.TagDiary.Web.Controllers.DiaryRecordController.Index),
-              ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.DiaryRecordController>(),
-              FormMethod.Post,
-              htmlAttributes: new { @id = "createNewDiaryForm" }))
+            nameof(Kitakun.TagDiary.Web.Controllers.DiaryRecordController.Index),
+            ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.DiaryRecordController>(),
+            FormMethod.Post,
+            htmlAttributes: new { @id = "createNewDiaryForm" }))
             {
                 @Html.HiddenFor(x => x.TokenUrl)
                 <input type="password" name="password" class="form-control" placeholder="Password" />
@@ -31,8 +29,11 @@
     }
 
     <div class="col-12">
-        <div id="fullMarkdown">
+        <div id="textContent" style="display:none">
             @Model.MarkdownText
+        </div>
+        <div id="fullMarkdown">
+
         </div>
     </div>
 </div>
@@ -40,9 +41,14 @@
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function () {
         $(document).ready(function () {
-            var converter = new showdown.Converter();
-            document.getElementById('fullMarkdown').innerHTML =
-                converter.makeHtml($('#fullMarkdown').html().trim());
+            var quill = new Quill('#fullMarkdown', {
+                modules: {
+                        toolbar: false
+                },
+                readOnly: true,
+                theme: 'snow'
+            });
+            quill.setContents(JSON.parse(document.getElementById('textContent').innerHTML));
 
             insertParam('recordKey', '@Model.TokenUrl');
         });

@@ -7,7 +7,8 @@
 
     <link rel="stylesheet" href="~/lib/tags-input-autocomplete-ajax/tags.css" />
     <link rel="stylesheet" href="~/lib/fontawesome-free-5.12.0-web/css/all.min.css" />
-    <link rel="stylesheet" href="~/lib/toopay-bootstrap-markdown-a496d34/css/bootstrap-markdown.min.css" />
+    <link rel="stylesheet" href="~/lib/quil/quill.snow.css" />
+
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     </environment>
@@ -43,11 +44,11 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" 
-                                    asp-controller="Auth"
-                                    asp-action="MoveToProvider"
-                                    asp-route-providerName="vk">
-                                VK
+                                <a class="nav-link text-dark"
+                                   asp-controller="Auth"
+                                   asp-action="MoveToProvider"
+                                   asp-route-providerName="vk">
+                                    VK
                                 </a>
                             </li>
                         }
@@ -73,8 +74,6 @@
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
     </environment>
-    <script src="~/lib/tags-input-autocomplete-ajax/tags.js"></script>
-    <script src="~/lib/toopay-bootstrap-markdown-a496d34/js/bootstrap-markdown.js"></script>
     <environment exclude="Development">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
@@ -89,9 +88,10 @@
                 integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
         </script>
     </environment>
+    <script src="~/lib/tags-input-autocomplete-ajax/tags.js"></script>
     <script src="~/lib/fontawesome-free-5.12.0-web/js/all.min.js" crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/lib/marked/marked.js" asp-append-version="true"></script>
+    <script src="~/lib/quil/quill.min.js" asp-append-version="true"></script>
     <script src="~/js/Calendar.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)

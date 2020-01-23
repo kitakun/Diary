@@ -159,7 +159,9 @@
             var newEntity = new SpaceOwner
             {
                 BlogPrivacy = model.BlogPrivacy,
-                MasterPasswordHash = _md5.Hash(model.MasterPasswordString),
+                MasterPasswordHash = !string.IsNullOrEmpty(model.MasterPasswordString)
+                    ? _md5.Hash(model.MasterPasswordString)
+                    : default,
                 UrlName = model.UrlName.ToLower(),
                 HumanName = model.HumanName,
                 UserOwnerId = userId
