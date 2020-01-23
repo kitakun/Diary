@@ -1664,6 +1664,11 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Ring\" />
+  </ItemGroup>
+
+
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>

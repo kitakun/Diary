@@ -12,6 +12,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.DataProtection;
 
     using Kitakun.TagDiary.Web.Infrastructure;
 
@@ -36,12 +37,17 @@
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(KyClass.GetKyRingDirectoryInfo(Configuration))
+                .SetApplicationName("SharedDiaryKey");
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.AccessDeniedPath = "/Auth/AccessDenied";
                     options.LoginPath = "/Auth/LoginPage";
-                    options.Cookie.Name = "Diary.AuthCookieAspNetCore";
+                    options.Cookie.Name = ".Diary.SharedAuth";
+                    options.Cookie.Domain = Configuration.GetSection("All").GetValue<string>("DomainName");
                 });
         }
 
