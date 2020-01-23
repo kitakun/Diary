@@ -16,7 +16,7 @@
             builder.Property(x => x.LastRecordDoneAt).IsRequired(true);
             builder.Property(x => x.CreatedAt).IsRequired(true);
 
-            builder.Property(x => x.MasterPasswordHash);
+            builder.Property(x => x.MasterPasswordHash).IsRequired(true);
 
             builder.HasOne(x => x.UserOwner).WithOne().HasForeignKey<SpaceOwner>(x => x.UserOwnerId);
 

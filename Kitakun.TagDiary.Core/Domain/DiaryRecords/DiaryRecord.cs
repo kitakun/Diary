@@ -17,6 +17,8 @@
 
         public string MarkdownText { get; set; }
 
+        public bool ShowFullTextPreview { get; set; }
+
         public PrivacyProtectionType Privacy { get; set; }
 
         public bool ProtectedByPassword { get; set; }

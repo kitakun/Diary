@@ -11,6 +11,7 @@
         {
             builder.RegisterType<EncoderRC4>().As<IEncrypter>().SingleInstance();
             builder.RegisterType<MapperService>().As<IMapperService>().InstancePerLifetimeScope();
+            builder.RegisterType<Md5>().As<IMd5>().SingleInstance();
 
             builder.RegisterType<TagsService>().As<ITagsService>().InstancePerLifetimeScope();
             builder.RegisterType<SpaceOwnerService>().As<ISpaceOwnerService>().InstancePerLifetimeScope();

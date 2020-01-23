@@ -73,6 +73,11 @@
                 .DiaryRecords
                 .AsNoTracking();
 
+            if((int)filterType == 0)
+            {
+                filterType = DiaryRecordsFiltersTypeEnum.ShowAvailable;
+            }
+
             if (isOwner)
             {
                 switch (filterType)

@@ -11,7 +11,6 @@
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.DataProtection;
 
     using Kitakun.TagDiary.Web.Infrastructure;
@@ -37,11 +36,14 @@
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+#if RELEASE
             services.AddDataProtection()
                 .PersistKeysToFileSystem(KyClass.GetKyRingDirectoryInfo(Configuration))
                 .SetApplicationName("SharedDiaryKey");
+#endif
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.AccessDeniedPath = "/Auth/AccessDenied";

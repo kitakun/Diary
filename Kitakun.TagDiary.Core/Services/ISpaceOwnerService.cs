@@ -10,6 +10,8 @@
 
         Task<int> GetSpaceOwnerIdByUrlAsync(string url);
 
+        Task<string> GetMasterPasswordByUrlAsync(string url);
+
         Task CreateNewSpaceOwnerAsync(SpaceOwner entity);
 
         Task<SpaceOwner[]> NewestBlogsAsync();

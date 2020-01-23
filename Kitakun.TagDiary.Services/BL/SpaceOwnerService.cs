@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Caching.Memory;
 
     using Kitakun.TagDiary.Core.Services;
     using Kitakun.TagDiary.Persistance;
@@ -13,25 +14,31 @@
     public class SpaceOwnerService : ISpaceOwnerService
     {
         private readonly IDiaryDbContext _dbContext;
+        private readonly IMemoryCache _memoryCache;
 
-        public SpaceOwnerService(IDiaryDbContext dbContext)
+        public SpaceOwnerService(
+            IDiaryDbContext dbContext,
+            IMemoryCache memoryCache)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
         public Task<bool> HasSpaceByUrlAsync(string url) =>
-            _dbContext
-                .SpaceOwners
-                .AsNoTracking()
-                .AnyAsync(a => a.UrlName == url.ToLower());
+            _memoryCache.GetOrCreateAsync($"HasSpaceByUrlAsync({url})", (e)=>
+                _dbContext
+                    .SpaceOwners
+                    .AsNoTracking()
+                    .AnyAsync(a => a.UrlName == url.ToLower()));
 
         public Task<int> GetSpaceOwnerIdByUrlAsync(string url) =>
-            _dbContext
-                .SpaceOwners
-                .AsNoTracking()
-                .Where(w => w.UrlName == url)
-                .Select(s => s.Id)
-                .FirstAsync();
+            _memoryCache.GetOrCreateAsync($"GetSpaceOwnerIdByUrlAsync({url})", (e) =>
+                _dbContext
+                    .SpaceOwners
+                    .AsNoTracking()
+                    .Where(w => w.UrlName == url)
+                    .Select(s => s.Id)
+                    .FirstAsync());
 
         public Task CreateNewSpaceOwnerAsync(SpaceOwner entity)
         {
@@ -50,12 +57,25 @@
         }
 
         public Task<SpaceOwner[]> NewestBlogsAsync() =>
-            _dbContext
-                .SpaceOwners
-                .AsNoTracking()
-                .Where(w => w.BlogPrivacy == PrivacyProtectionType.VisibleByAll)
-                .OrderByDescending(x => x.LastRecordDoneAt)
-                .Take(25)
-                .ToArrayAsync();
+            _memoryCache.GetOrCreateAsync($"NewestBlogsAsync()", (e) =>
+            {
+                e.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(25);
+                return _dbContext
+                    .SpaceOwners
+                    .AsNoTracking()
+                    .Where(w => w.BlogPrivacy == PrivacyProtectionType.VisibleByAll)
+                    .OrderByDescending(x => x.LastRecordDoneAt)
+                    .Take(25)
+                    .ToArrayAsync();
+            });
+
+        public Task<string> GetMasterPasswordByUrlAsync(string url) =>
+            _memoryCache.GetOrCreateAsync($"GetMasterPasswordByUrlAsync({url})", (e) =>
+                _dbContext
+                    .SpaceOwners
+                    .AsNoTracking()
+                    .Where(w => w.UrlName == url)
+                    .Select(s => s.MasterPasswordHash)
+                    .FirstOrDefaultAsync());
     }
 }

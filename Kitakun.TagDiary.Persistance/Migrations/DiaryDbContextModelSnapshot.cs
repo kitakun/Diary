@@ -38,6 +38,8 @@ namespace Kitakun.TagDiary.Persistance.Migrations
                     b.Property<string>("ShortDescription")
                         .IsRequired();
 
+                    b.Property<bool>("ShowFullTextPreview");
+
                     b.Property<int>("SpaceId");
 
                     b.Property<string[]>("Tags")
@@ -69,7 +71,8 @@ namespace Kitakun.TagDiary.Persistance.Migrations
 
                     b.Property<DateTime>("LastRecordDoneAt");
 
-                    b.Property<string>("MasterPasswordHash");
+                    b.Property<string>("MasterPasswordHash")
+                        .IsRequired();
 
                     b.Property<string>("UrlName")
                         .IsRequired()

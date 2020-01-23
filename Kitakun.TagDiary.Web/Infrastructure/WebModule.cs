@@ -15,6 +15,9 @@
             builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>().SingleInstance();
             builder.RegisterType<WebContext>().As<IWebContext>().InstancePerLifetimeScope();
             builder.RegisterType<AuthService>().As<IAuthService>().InstancePerLifetimeScope();
+
+            builder.RegisterType<MasterPasswordProtectedFilter>().AsSelf().InstancePerLifetimeScope();
+            
         }
     }
 }

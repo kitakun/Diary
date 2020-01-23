@@ -16,6 +16,6 @@
         public PrivacyProtectionType BlogPrivacy { get; set; }
 
         [Display(Name = "Пароль (если нужен)")]
-        public string MasterPasswordHash { get; set; }
+        public string MasterPasswordString { get; set; }
     }
 }

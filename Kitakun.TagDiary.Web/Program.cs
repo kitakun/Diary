@@ -1,5 +1,12 @@
 ﻿namespace Kitakun.TagDiary.Web
 {
+#if RELEASE
+    using System;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.EntityFrameworkCore;
+
+    using Kitakun.TagDiary.Persistance;
+#endif
     using System.IO;
 
     using Microsoft.AspNetCore;
@@ -18,21 +25,21 @@
             var buildedApp = CreateWebHostBuilder(args).Build();
 
 #if RELEASE
-            //using (var scope = buildedApp.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
+            using (var scope = buildedApp.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
 
-            //    try
-            //    {
-            //        var context = services.GetRequiredService<VkDbContext>();
-            //        context.Database.Migrate();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        var logger = services.GetRequiredService<ILogger<Program>>();
-            //        logger.LogError(ex, "An error occurred seeding the DB.");
-            //    }
-            //}
+                try
+                {
+                    var context = services.GetRequiredService<DiaryDbContext>();
+                    context.Database.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occu rred seeding the DB.");
+                }
+            }
 #endif
 
             buildedApp.Run();
@@ -47,7 +54,7 @@
                     c.ListenAnyIP(HttpPort);
                     c.ListenAnyIP(HttpsPort, cc =>
                     {
-                        cc.UseHttps("myvklikes.pfx", "f5432yx5o");
+                        cc.UseHttps("qwe.pfx", "qwe");
                     });
                 })
 #endif

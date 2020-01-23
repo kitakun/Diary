@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
 
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
 
     using Kitakun.TagDiary.Core.Services;
     using Kitakun.TagDiary.Core.Domain;
@@ -11,6 +12,7 @@
     using Kitakun.TagDiary.ViewModels.Models.SpaceOwnerModels;
     using Kitakun.TagDiary.ViewModels.Models.Components.CreateNewDiaryRecordComponent;
     using Kitakun.TagDiary.Core.Extensions;
+    using Kitakun.TagDiary.Web.Infrastructure;
 
     public class SpaceOwnerController : Controller
     {
@@ -19,22 +21,32 @@
         private readonly IDiaryRecordService _diaryRecordService;
         private readonly IMapperService _mapperService;
         private readonly ITagsService _tagsService;
+        private readonly IConfiguration _appConfig;
+        private readonly IEncrypter _encrypter;
+        private readonly IMd5 _md5;
 
         public SpaceOwnerController(
             IWebContext webContext,
             ISpaceOwnerService spaceOwnerService,
             IDiaryRecordService diaryRecordService,
             IMapperService mapperService,
-            ITagsService tagsService)
+            ITagsService tagsService,
+            IConfiguration appConfig,
+            IEncrypter encrypter,
+            IMd5 md5)
         {
             _webContext = webContext ?? throw new ArgumentNullException(nameof(webContext));
             _spaceOwnerService = spaceOwnerService ?? throw new ArgumentNullException(nameof(spaceOwnerService));
             _diaryRecordService = diaryRecordService ?? throw new ArgumentNullException(nameof(diaryRecordService));
             _mapperService = mapperService ?? throw new ArgumentNullException(nameof(mapperService));
             _tagsService = tagsService ?? throw new ArgumentNullException(nameof(tagsService));
+            _appConfig = appConfig ?? throw new ArgumentNullException(nameof(appConfig));
+            _encrypter = encrypter ?? throw new ArgumentNullException(nameof(encrypter));
+            _md5 = md5 ?? throw new ArgumentNullException(nameof(md5));
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(MasterPasswordProtectedFilter))]
         public async Task<IActionResult> Index()
         {
             var urlPart = _webContext.CurrentSpaceUrlPrefix;
@@ -61,6 +73,7 @@
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(MasterPasswordProtectedFilter))]
         public async Task<IActionResult> Index([FromForm]SpaceOwnerIndexFilterModel filter)
         {
             var urlPart = _webContext.CurrentSpaceUrlPrefix;
@@ -105,6 +118,37 @@
         }
 
         [HttpGet]
+        public IActionResult MasterPassword() => View();
+
+        [HttpPost]
+        public async Task<IActionResult> MasterPassword([FromForm]string passwrd)
+        {
+            var passwordHash = await _spaceOwnerService.GetMasterPasswordByUrlAsync(_webContext.CurrentSpaceUrlPrefix);
+            var enteredPasswordHash = _md5.Hash(passwrd);
+            if (passwordHash == enteredPasswordHash)
+            {
+                var encryptedPassword = _encrypter.Encrypt(_appConfig.GetSection("All").GetValue<string>("AppSecret"), passwrd);
+
+                HttpContext.Response.Cookies.Append(
+                    DiaryWebConstants.MasterPasswordCookieName,
+                    encryptedPassword,
+                    new Microsoft.AspNetCore.Http.CookieOptions
+                    {
+                        IsEssential = true,
+                        Expires = DateTimeOffset.UtcNow.AddDays(10)
+                    });
+
+                return RedirectToAction(nameof(SpaceOwnerController.Index));
+            }
+            else
+            {
+                HttpContext.Response.Cookies.Delete(DiaryWebConstants.MasterPasswordCookieName);
+            }
+
+            return View(model: "Пароль не подходит");
+        }
+
+        [HttpGet]
         public IActionResult CreateNew() => View();
 
         [HttpPost]
@@ -115,7 +159,7 @@
             var newEntity = new SpaceOwner
             {
                 BlogPrivacy = model.BlogPrivacy,
-                MasterPasswordHash = model.MasterPasswordHash,
+                MasterPasswordHash = _md5.Hash(model.MasterPasswordString),
                 UrlName = model.UrlName.ToLower(),
                 HumanName = model.HumanName,
                 UserOwnerId = userId
