@@ -14,7 +14,9 @@
         private readonly Lazy<bool> _isSpaceOwner;
         public bool IsSpaceOwner => _isSpaceOwner.Value;
 
-        public WebContext(IHttpContextAccessor webContextAccessor)
+        public WebContext(
+            IHttpContextAccessor webContextAccessor,
+            ISpaceOwnerService spaceOwnerService)
         {
             _spaceOwnerLazy = new Lazy<string>(() =>
             {
@@ -33,7 +35,17 @@
                 return string.Empty;
             });
 
-            _isSpaceOwner = new Lazy<bool>(() => true);
+            _isSpaceOwner = new Lazy<bool>(() =>
+            {
+                var rawUserId = webContextAccessor.HttpContext.User.Identity.Name;
+                if (!string.IsNullOrEmpty(rawUserId) && int.TryParse(rawUserId, out var userId))
+                {
+                    var actualOwnerId = spaceOwnerService.GetSpaceOwnerIdByUrlAsync(_spaceOwnerLazy.Value).GetAwaiter().GetResult();
+                    return actualOwnerId == userId;
+                }
+
+                return false;
+            });
         }
     }
 }

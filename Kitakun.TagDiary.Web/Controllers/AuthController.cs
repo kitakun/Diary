@@ -2,8 +2,6 @@
 {
     using System;
     using System.Threading.Tasks;
-    using System.Security.Claims;
-    using System.Collections.Generic;
     using System.Linq;
 
     using Microsoft.AspNetCore.Authorization;
@@ -14,6 +12,7 @@
     using Kitakun.ExternalLogin.Abstraction;
     using Kitakun.ExternalLogin.Vk;
     using Kitakun.TagDiary.Web.Extensions;
+    using Kitakun.TagDiary.Web.Infrastructure;
 
     [AllowAnonymous]
     public class AuthController : Controller
@@ -72,6 +71,8 @@
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            HttpContext.Response.Cookies.Delete(DiaryWebConstants.MasterPasswordCookieName);
 
             return RedirectToAction(
                 nameof(HomeController.Index),

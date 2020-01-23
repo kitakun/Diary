@@ -39,7 +39,13 @@
                         </li>
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li>authed</li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"
+                                   asp-controller="Auth"
+                                   asp-action="Logout">
+                                    Выйти
+                                </a>
+                            </li>
                         }
                         else
                         {
