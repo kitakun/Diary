@@ -1,26 +1,38 @@
 ﻿namespace Kitakun.ExternalLogin.Vk
 {
     using System;
-    using System.Linq;
     using System.Net.Http;
     using System.Text;
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
 
     using Kitakun.ExternalLogin.Abstraction;
     using Kitakun.ExternalLogin.Vk.Models;
 
     public class VkAuth : IAuthProvider
     {
-        public const int AppId = 7290460;
-        public const string BackUrl = "https://localhost:5011/externalAuth/Vk?";
-        public const string AppSecret = "5z4PwEYmfnCkDrcLWJa5";
         public const string ApiVersion = "5.8";
+
+        private readonly int _appId;
+        private readonly string _backUrl;
+        private readonly string _appSecret;
+
+        private readonly IConfiguration _appConfig;
+
+        public VkAuth(IConfiguration appConfig)
+        {
+            _appConfig = appConfig ?? throw new ArgumentNullException(nameof(appConfig));
+
+            _backUrl = $"{_appConfig.GetSection("All")["SiteUrl"]}externalAuth/Vk?";
+            _appSecret = _appConfig.GetSection("ExternalLogins")["VkAppSecret"];
+            _appId = int.Parse(_appConfig.GetSection("ExternalLogins")["VkAppId"]);
+        }
 
         public IActionResult RedirectToProvider()
         {
-            var url = $"https://oauth.vk.com/authorize?client_id={AppId}&display=page&redirect_uri={BackUrl}&response_type=code&v={ApiVersion}";
+            var url = $"https://oauth.vk.com/authorize?client_id={_appId}&display=page&redirect_uri={_backUrl}&response_type=code&v={ApiVersion}";
 
             return new RedirectResult(url, false);
         }
@@ -32,9 +44,9 @@
                 throw new Exception($"While accessing vk get response without access token");
             }
 
-            using(var client = new HttpClient())
+            using (var client = new HttpClient())
             {
-                var accessTokenUrl = $"https://oauth.vk.com/access_token?client_id={AppId}&client_secret={AppSecret}&code={atokenStrVal.ToString()}&v={ApiVersion}&redirect_uri={BackUrl}";
+                var accessTokenUrl = $"https://oauth.vk.com/access_token?client_id={_appId}&client_secret={_appSecret}&code={atokenStrVal.ToString()}&v={ApiVersion}&redirect_uri={_backUrl}";
                 var tokenModel = default(VkAccessTokenModel);
                 using (var resp = client.GetAsync(accessTokenUrl).Result)
                 {
