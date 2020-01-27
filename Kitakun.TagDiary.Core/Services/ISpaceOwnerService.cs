@@ -12,8 +12,23 @@
 
         Task<string> GetMasterPasswordByUrlAsync(string url);
 
+        /// <summary>
+        /// Crud
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         Task CreateNewSpaceOwnerAsync(SpaceOwner entity);
 
+        /// <summary>
+        /// Load last N updated blogs for main page
+        /// </summary>
+        /// <returns></returns>
         Task<SpaceOwner[]> NewestBlogsAsync();
+
+        /// <summary>
+        /// Load SpaceOwner for current loggined user
+        /// </summary>
+        /// <returns></returns>
+        Task<SpaceOwner> LoadSpaceOfCurrentUserAsync(int userId);
     }
 }

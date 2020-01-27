@@ -11,9 +11,10 @@
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.AspNetCore.DataProtection;
 
     using Kitakun.TagDiary.Web.Infrastructure;
+    using Kitakun.TagDiary.Web.Extensions;
+    using Kitakun.TagDiary.Web.Controllers;
 
     public class Startup
     {
@@ -35,12 +36,6 @@
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-#if RELEASE
-            services.AddDataProtection()
-                .PersistKeysToFileSystem(KyClass.GetKyRingDirectoryInfo(Configuration))
-                .SetApplicationName("SharedDiaryKey");
-#endif
 
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -80,13 +75,27 @@
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: DiaryWebConstants.RouteWithOwnerName,
+                    template: $"{{{DiaryWebConstants.RouteByOwnerName}}}/{{controller=Home}}/{{action=Index}}/{{id?}}");
+
+                //routes.MapRoute(
+                //    name: "inDiaryRoot",
+                //    template: $"{{{DiaryWebConstants.RouteByOwnerName}}}/{{controller={ControllerExtensions.GetControllerName<SpaceOwnerController>()}}}/{{action={nameof(SpaceOwnerController.Index)}}}");
+
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: DiaryWebConstants.RouteByOwnerName,
+                    template: $"{{{DiaryWebConstants.RouteByOwnerName}}}",
+                    defaults: new { controller = "SpaceOwner", action = "Index" });
 
                 routes.MapRoute(
                     name: "auth",
                     template: "externalAuth/{providerName}",
                     defaults: new { controller = "Auth", action = "ExternalAuth" });
+
             });
         }
     }

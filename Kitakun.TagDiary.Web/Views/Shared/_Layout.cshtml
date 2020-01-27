@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Kitakun.TagDiary.Web</title>
+    <title>Write it down @ViewData["Title"]!</title>
 
     <link rel="stylesheet" href="~/lib/tags-input-autocomplete-ajax/tags.css" />
     <link rel="stylesheet" href="~/lib/fontawesome-free-5.12.0-web/css/all.min.css" />
@@ -27,7 +27,10 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Kitakun.TagDiary.Web</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span>Write it down!</span>
+                    <i class="fas fa-feather-alt"></i>
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -35,7 +38,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            @(await Component.InvokeAsync<Kitakun.TagDiary.Web.Components.BackToHomeComponent>())
                         </li>
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -64,7 +67,7 @@
         </nav>
     </header>
     <div class="container">
-        <partial name="_CookieConsentPartial" />
+        @*<partial name="_CookieConsentPartial" />*@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -72,7 +75,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - TagDiary.Web
+            &copy; 2020 - WriteItDown.ru
         </div>
     </footer>
 

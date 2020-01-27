@@ -1,7 +1,5 @@
 ﻿@model Kitakun.TagDiary.Core.Domain.SpaceOwner[];
-@{
-    ViewData["Title"] = "Home Page";
-}
+@inject Kitakun.TagDiary.Core.Services.ISpaceOwnerService spaceOwnerService;
 
 <div class="text-center">
     <h1 class="display-4">Привет!</h1>
@@ -20,7 +18,20 @@
     <div>
         @if (User.Identity.IsAuthenticated)
         {
-            <a class="nav-link" asp-area="" asp-controller="SpaceOwner" asp-action="CreateNew">Создать свой дневник</a>
+            var userIdNumber = int.Parse(User.Identity.Name);
+            var createdSpace = await spaceOwnerService.LoadSpaceOfCurrentUserAsync(userIdNumber);
+            
+            if (createdSpace != null)
+            {
+                <a asp-controller="SpaceOwner"
+                   asp-action="RedirectToSub"
+                   asp-route-key="@createdSpace.UrlName"
+                   class="card-subtitle text-muted text-right">Открыть ваш дневник</a>
+            }
+            else
+            {
+                <a class="nav-link" asp-area="" asp-controller="SpaceOwner" asp-action="CreateNew">Создать свой дневник</a>
+            }
         }
         else
         {
@@ -31,22 +42,22 @@
 
 @if (Model != null && Model.Length > 0)
 {
-<div>
-    <br/>
-    <div class="separator">Свежейшие записи</div>
-    <div class="card-columns">
-        @for (var i = 0; i < Model.Length; i++)
-        {
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">@Model[i].HumanName</h5>
-                    <a asp-controller="SpaceOwner"
-                       asp-action="RedirectToSub"
-                       asp-route-key="@Model[i].UrlName"
-                       class="card-subtitle text-muted text-right">Перейти</a>
+    <div>
+        <br />
+        <div class="separator">Свежейшие записи</div>
+        <div class="card-columns">
+            @for (var i = 0; i < Model.Length; i++)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@Model[i].HumanName</h5>
+                        <a asp-controller="SpaceOwner"
+                           asp-action="RedirectToSub"
+                           asp-route-key="@Model[i].UrlName"
+                           class="card-subtitle text-muted text-right">Перейти</a>
+                    </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
-</div>
 }

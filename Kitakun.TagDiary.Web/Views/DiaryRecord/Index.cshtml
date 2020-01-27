@@ -1,8 +1,9 @@
 ﻿@model Kitakun.TagDiary.Core.Domain.DiaryRecord;
-@using Kitakun.TagDiary.Web.Extensions;
+@inject Kitakun.TagDiary.Web.Infrastructure.Services.DiaryUrlService diaryUrl;
+
 @{
-    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var formPostHref = diaryUrl.UrlToAction<Kitakun.TagDiary.Web.Controllers.DiaryRecordController>(nameof(Kitakun.TagDiary.Web.Controllers.DiaryRecordController.Index));
 }
 
 <div class="row">
@@ -12,15 +13,10 @@
             <h3>@Model.ShortDescription</h3>
         </div>
         <div class="col-2">
-            @using (Html.BeginForm(
-            nameof(Kitakun.TagDiary.Web.Controllers.DiaryRecordController.Index),
-            ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.DiaryRecordController>(),
-            FormMethod.Post,
-            htmlAttributes: new { @id = "createNewDiaryForm" }))
-            {
+            <form action="@formPostHref" id="createNewDiaryForm" method="post">
                 @Html.HiddenFor(x => x.TokenUrl)
                 <input type="password" name="password" class="form-control" placeholder="Password" />
-            }
+            </form>
         </div>
     }
     else

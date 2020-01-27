@@ -1,7 +1,6 @@
 ﻿@model Kitakun.TagDiary.ViewModels.Models.SpaceOwnerModels.CreateNewSpaceModel
 @using Kitakun.TagDiary.Core.Domain;
 @{
-    ViewData["Title"] = "CreateNew";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var enumValues = Kitakun.TagDiary.Extensions.ArrayExtensions.PrepareEnum<PrivacyProtectionType>(PrivacyProtectionType.VisibleByAll);
 }

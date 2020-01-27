@@ -13,7 +13,10 @@
     using Kitakun.TagDiary.ViewModels.Models.Components.CreateNewDiaryRecordComponent;
     using Kitakun.TagDiary.Core.Extensions;
     using Kitakun.TagDiary.Web.Infrastructure;
+    using Kitakun.TagDiary.Web.Infrastructure.Services;
+    using Kitakun.TagDiary.Web.Infrastructure.Filters;
 
+    [ServiceFilter(typeof(SetTitleSpaceOwnerNameFilter))]
     public class SpaceOwnerController : Controller
     {
         private readonly IWebContext _webContext;
@@ -24,6 +27,7 @@
         private readonly IConfiguration _appConfig;
         private readonly IEncrypter _encrypter;
         private readonly IMd5 _md5;
+        private readonly DiaryUrlService _urlService;
 
         public SpaceOwnerController(
             IWebContext webContext,
@@ -33,7 +37,8 @@
             ITagsService tagsService,
             IConfiguration appConfig,
             IEncrypter encrypter,
-            IMd5 md5)
+            IMd5 md5,
+            DiaryUrlService urlService)
         {
             _webContext = webContext ?? throw new ArgumentNullException(nameof(webContext));
             _spaceOwnerService = spaceOwnerService ?? throw new ArgumentNullException(nameof(spaceOwnerService));
@@ -43,6 +48,7 @@
             _appConfig = appConfig ?? throw new ArgumentNullException(nameof(appConfig));
             _encrypter = encrypter ?? throw new ArgumentNullException(nameof(encrypter));
             _md5 = md5 ?? throw new ArgumentNullException(nameof(md5));
+            _urlService = urlService ?? throw new ArgumentNullException(nameof(urlService));
         }
 
         [HttpGet]
@@ -56,6 +62,10 @@
             }
 
             var spaceId = await _spaceOwnerService.GetSpaceOwnerIdByUrlAsync(urlPart);
+            if (spaceId == 0)
+            {
+                return _urlService.RedirectTo<HomeController>(nameof(HomeController.NotFoundSpaceOwner));
+            }
 
             const int loadLastElementsCount = 25;
 
@@ -83,6 +93,10 @@
             }
 
             var spaceId = await _spaceOwnerService.GetSpaceOwnerIdByUrlAsync(urlPart);
+            if (spaceId == 0)
+            {
+                return _urlService.RedirectTo<HomeController>(nameof(HomeController.NotFoundSpaceOwner));
+            }
 
             const int loadLastElementsCount = 25;
 
@@ -121,10 +135,11 @@
         public IActionResult MasterPassword() => View();
 
         [HttpPost]
-        public async Task<IActionResult> MasterPassword([FromForm]string passwrd)
+        public async Task<IActionResult> MasterPassword([FromForm] string passwrd)
         {
             var passwordHash = await _spaceOwnerService.GetMasterPasswordByUrlAsync(_webContext.CurrentSpaceUrlPrefix);
             var enteredPasswordHash = _md5.Hash(passwrd);
+
             if (passwordHash == enteredPasswordHash)
             {
                 var encryptedPassword = _encrypter.Encrypt(_appConfig.GetSection("All").GetValue<string>("AppSecret"), passwrd);
@@ -138,7 +153,7 @@
                         Expires = DateTimeOffset.UtcNow.AddDays(10)
                     });
 
-                return RedirectToAction(nameof(SpaceOwnerController.Index));
+                return _urlService.RedirectTo<SpaceOwnerController>(nameof(Index));
             }
             else
             {
@@ -169,15 +184,22 @@
 
             await _spaceOwnerService.CreateNewSpaceOwnerAsync(newEntity);
 
-            var redirectUrl = Request.RedirectToSubdomain(newEntity.UrlName);
-
-            return new RedirectResult(redirectUrl, false);
+            return _urlService.RedirectTo<SpaceOwnerController>(nameof(Index), newEntity.UrlName);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateNewDiaryRecord([FromForm] CreateNewDiaryRecordModel model)
         {
+            if (string.IsNullOrEmpty(_webContext.CurrentSpaceUrlPrefix))
+            {
+                throw new Exception("Space url is missed");
+            }
+
             var spaceId = await _spaceOwnerService.GetSpaceOwnerIdByUrlAsync(_webContext.CurrentSpaceUrlPrefix);
+            if (spaceId == 0)
+            {
+                return _urlService.RedirectTo<HomeController>(nameof(HomeController.NotFoundSpaceOwner));
+            }
 
             var newEntity = new DiaryRecord
             {
@@ -195,11 +217,11 @@
 
             await _diaryRecordService.CreateNewRecordAsync(newEntity, model.PasswordSource);
 
-            return RedirectToAction(nameof(SpaceOwnerController.Index));
+            return _urlService.RedirectTo<SpaceOwnerController>(nameof(Index));
         }
 
         [HttpGet]
         public IActionResult RedirectToSub([FromQuery] string key) =>
-            new RedirectResult(Request.RedirectToSubdomain(key), false);
+            _urlService.RedirectTo<SpaceOwnerController>(nameof(Index), key);
     }
 }

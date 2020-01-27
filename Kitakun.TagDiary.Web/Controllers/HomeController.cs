@@ -9,23 +9,26 @@
     using Microsoft.Extensions.Caching.Memory;
 
     using Kitakun.TagDiary.Core.Services;
-    using Kitakun.TagDiary.Web.Extensions;
     using Kitakun.TagDiary.ViewModels.Models;
+    using Kitakun.TagDiary.Web.Infrastructure.Services;
 
     public class HomeController : Controller
     {
         private readonly IWebContext _webContext;
         private readonly ISpaceOwnerService _spaceOwnerService;
         private readonly IMemoryCache _memCache;
+        private readonly DiaryUrlService _diaryUrlHelper;
 
         public HomeController(
             IWebContext webContext,
             ISpaceOwnerService spaceOwnerService,
-            IMemoryCache memCache)
+            IMemoryCache memCache,
+            DiaryUrlService diaryUrlHelper)
         {
             _webContext = webContext ?? throw new ArgumentNullException(nameof(webContext));
             _spaceOwnerService = spaceOwnerService ?? throw new ArgumentNullException(nameof(spaceOwnerService));
             _memCache = memCache ?? throw new ArgumentNullException(nameof(memCache));
+            _diaryUrlHelper = diaryUrlHelper ?? throw new ArgumentNullException(nameof(diaryUrlHelper));
         }
 
         [HttpGet]
@@ -37,13 +40,11 @@
             {
                 if (await _spaceOwnerService.HasSpaceByUrlAsync(spaceOwnerRedirection))
                 {
-                    return RedirectToAction(
-                        nameof(SpaceOwnerController.Index),
-                        ControllerExtensions.GetControllerName<SpaceOwnerController>());
+                    return _diaryUrlHelper.RedirectTo<SpaceOwnerController>(nameof(Index));
                 }
                 else
                 {
-                    return RedirectToAction(nameof(NotFoundSpaceOwner));
+                    return _diaryUrlHelper.RedirectTo<HomeController>(nameof(NotFoundSpaceOwner));
                 }
             }
             else
@@ -54,6 +55,7 @@
                         e.SetAbsoluteExpiration(new TimeSpan(0, 30, 0));
                         return _spaceOwnerService.NewestBlogsAsync();
                     });
+
                 return View(existingBlogs);
             }
         }

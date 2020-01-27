@@ -2,13 +2,12 @@
 {
     using System.Threading.Tasks;
 
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Configuration;
 
     using Kitakun.TagDiary.Core.Services;
     using Kitakun.TagDiary.Web.Controllers;
-    using Kitakun.TagDiary.Web.Extensions;
+    using Kitakun.TagDiary.Web.Infrastructure.Services;
 
     public class MasterPasswordProtectedFilter : ActionFilterAttribute
     {
@@ -17,19 +16,22 @@
         private readonly IConfiguration _appConfig;
         private readonly IEncrypter _encrypter;
         private readonly IMd5 _md5;
+        private readonly DiaryUrlService _urlHelper;
 
         public MasterPasswordProtectedFilter(
             IWebContext webContext,
             ISpaceOwnerService spaceOwnerService,
             IConfiguration appConfig,
             IEncrypter encrypter,
-            IMd5 md5)
+            IMd5 md5,
+            DiaryUrlService urlHelper)
         {
             _webContext = webContext ?? throw new System.ArgumentNullException(nameof(webContext));
             _spaceOwnerService = spaceOwnerService ?? throw new System.ArgumentNullException(nameof(spaceOwnerService));
             _appConfig = appConfig ?? throw new System.ArgumentNullException(nameof(appConfig));
             _encrypter = encrypter ?? throw new System.ArgumentNullException(nameof(encrypter));
             _md5 = md5 ?? throw new System.ArgumentNullException(nameof(md5));
+            _urlHelper = urlHelper ?? throw new System.ArgumentNullException(nameof(urlHelper));
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -62,10 +64,7 @@
                             context.HttpContext.Response.Cookies.Delete(DiaryWebConstants.MasterPasswordCookieName);
                         }
 
-                        context.Result = new RedirectToActionResult(
-                            nameof(SpaceOwnerController.MasterPassword),
-                            ControllerExtensions.GetControllerName<SpaceOwnerController>(),
-                            null);
+                        context.Result = _urlHelper.RedirectTo<SpaceOwnerController>(nameof(SpaceOwnerController.MasterPassword));
                         return;
                     }
                 }

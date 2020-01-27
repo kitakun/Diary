@@ -5,9 +5,12 @@
     using Microsoft.AspNetCore.Http;
 
     using Kitakun.TagDiary.Core.Services;
+    using Microsoft.AspNetCore.Mvc.Infrastructure;
 
     public class WebContext : IWebContext
     {
+        private readonly IActionContextAccessor _actionContext;
+
         private readonly Lazy<string> _spaceOwnerLazy;
         public string CurrentSpaceUrlPrefix => _spaceOwnerLazy.Value;
 
@@ -16,23 +19,22 @@
 
         public WebContext(
             IHttpContextAccessor webContextAccessor,
+            IActionContextAccessor actionContext,
             ISpaceOwnerService spaceOwnerService)
         {
+            _actionContext = actionContext ?? throw new ArgumentNullException(nameof(actionContext));
+
             _spaceOwnerLazy = new Lazy<string>(() =>
             {
-                var host = webContextAccessor.HttpContext.Request.Host.Host;
-                var dotSplit = host.Split(".");
-#if DEBUG
-                const int initialElementsCount = 2;
-#else
-                const int initialElementsCount = 3;
-#endif
-                if (dotSplit.Length >= initialElementsCount)
-                {
-                    return dotSplit[0].ToLower();
-                }
+                var ownerName = _actionContext
+                    .ActionContext
+                    .RouteData
+                    .Values[DiaryWebConstants.RouteByOwnerName]?
+                    .ToString();
 
-                return string.Empty;
+                return string.IsNullOrEmpty(ownerName)
+                    ? string.Empty
+                    : ownerName;
             });
 
             _isSpaceOwner = new Lazy<bool>(() =>

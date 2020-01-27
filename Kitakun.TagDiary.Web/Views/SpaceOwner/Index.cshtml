@@ -2,8 +2,10 @@
 @using Kitakun.TagDiary.Core.Domain.DiaryRecords;
 @using Kitakun.TagDiary.Extensions;
 @using Kitakun.TagDiary.Web.Extensions;
+@using Kitakun.TagDiary.Web.Infrastructure;
+@using Kitakun.TagDiary.Web.Controllers;
+@inject Kitakun.TagDiary.Web.Infrastructure.Services.DiaryUrlService diaryUrl;
 @{
-    ViewData["Title"] = "Записи";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var jsTagsData = Model.AllTags == null || Model.AllTags.Length == 0
         ? string.Empty
@@ -106,7 +108,15 @@
                                 @if (!string.IsNullOrEmpty(recordsFromGroup[i].UrlToken))
                                 {
                                     <div class="float-right">
-                                        <a asp-area="" asp-controller="DiaryRecord" asp-action="Index" asp-route-recordKey="@recordsFromGroup[i].UrlToken">Прочитать</a>
+
+                                        @{ 
+                                            var curLocalHref = diaryUrl.UrlToAction<DiaryRecordController>(nameof(DiaryRecordController.Index), new
+                                            {
+                                                recordKey = recordsFromGroup[i].UrlToken
+                                            });
+                                        }
+                                        <a href="@curLocalHref">Прочитать</a>
+
                                         @if (recordsFromGroup[i].HasPassword)
                                         {
                                             <i class="fas fa-lock"></i>
@@ -116,7 +126,7 @@
                                             @switch (recordsFromGroup[i].Privacy)
                                             {
                                                 case Kitakun.TagDiary.Core.Domain.PrivacyProtectionType.VisibleByMasterPassword:
-                                            <i class="fas fa-unlock"></i>
+                                                    <i class="fas fa-unlock"></i>
                                                     break;
                                                 case Kitakun.TagDiary.Core.Domain.PrivacyProtectionType.VisibleByLink:
                                                     <i class="fas fa-link"></i>
@@ -143,10 +153,15 @@
         </div>
         <div class="list-group">
 
-            @using (Html.BeginForm(
-                 nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.Index),
-                 ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(),
+            @using (Html.BeginRouteForm(
+                 DiaryWebConstants.RouteWithOwnerName,
+                 new
+                 {
+                     action = nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.Index),
+                     controller = ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(),
+                 },
                  FormMethod.Post,
+                 true,
                  htmlAttributes: new { @id = "filterRecords" }))
             {
 

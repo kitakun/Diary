@@ -1,7 +1,8 @@
 ﻿@model Kitakun.TagDiary.ViewModels.Models.Components.CreateNewDiaryRecordComponent.CreateNewDiaryRecordModel
 @using Kitakun.TagDiary.Core.Domain;
 @using Kitakun.TagDiary.Extensions;
-@using Kitakun.TagDiary.Web.Extensions;
+
+@inject Kitakun.TagDiary.Web.Infrastructure.Services.DiaryUrlService diaryUrl;
 
 @{
     Layout = null;
@@ -19,12 +20,11 @@
 
 <div class="collapse" id="collapseCreateNewRecord">
     <div>
-        @using (Html.BeginForm(
-           nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.CreateNewDiaryRecord),
-           ControllerExtensions.GetControllerName<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(),
-           FormMethod.Post,
-           htmlAttributes: new { @id = "createNewDiaryForm" }))
-        {
+        @{
+            var formUrl = diaryUrl.UrlToAction<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(
+                nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.CreateNewDiaryRecord));
+        }
+        <form action="@formUrl" id="createNewDiaryForm" method="post">
             <div class="form-group">
                 @Html.LabelFor(x => x.ShortDescription, htmlAttributes: new { @class = "control-label" })
                 @Html.EditorFor(x => x.ShortDescription, new { htmlAttributes = new { @class = "form-control" } })
@@ -33,7 +33,7 @@
             <div class="form-group">
                 @Html.LabelFor(x => x.Tags, htmlAttributes: new { @class = "control-label" })
                 @Html.HiddenFor(x => x.TagInput,
-                new{ 
+                new{
                     @id = "hiddenTagInput"
                 })
                 <div class="tags-input" id="myTags">
@@ -71,7 +71,7 @@
             </div>
 
             <button class="btn btn-primary" type="submit">Создать запись</button>
-        }
+        </form>
     </div>
 </div>
 

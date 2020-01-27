@@ -1,0 +1,10 @@
+﻿@model string
+
+@if (string.IsNullOrEmpty(Model))
+{
+    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Главная</a>
+}
+else
+{
+    <a href="@Model" class="nav-link text-dark">Главная</a>
+}

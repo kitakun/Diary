@@ -25,7 +25,7 @@
         }
 
         public Task<bool> HasSpaceByUrlAsync(string url) =>
-            _memoryCache.GetOrCreateAsync($"HasSpaceByUrlAsync({url})", (e)=>
+            _memoryCache.GetOrCreateAsync($"HasSpaceByUrlAsync({url})", (e) =>
                 _dbContext
                     .SpaceOwners
                     .AsNoTracking()
@@ -38,7 +38,7 @@
                     .AsNoTracking()
                     .Where(w => w.UrlName == url)
                     .Select(s => s.Id)
-                    .FirstAsync());
+                    .FirstOrDefaultAsync());
 
         public Task CreateNewSpaceOwnerAsync(SpaceOwner entity)
         {
@@ -77,5 +77,11 @@
                     .Where(w => w.UrlName == url)
                     .Select(s => s.MasterPasswordHash)
                     .FirstOrDefaultAsync());
+
+        public Task<SpaceOwner> LoadSpaceOfCurrentUserAsync(int userId) =>
+            _dbContext
+                .SpaceOwners
+                .AsNoTracking()
+                .FirstOrDefaultAsync(f => f.UserOwnerId == userId);
     }
 }
