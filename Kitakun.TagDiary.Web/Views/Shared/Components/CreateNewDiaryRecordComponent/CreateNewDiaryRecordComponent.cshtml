@@ -12,69 +12,75 @@
         : $"'{string.Join("','", Model.AllowedTags)}'";
 }
 
-<p>
-    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseCreateNewRecord" aria-expanded="false" aria-controls="collapseCreateNewRecord">
-        Создать запись
-    </button>
-</p>
+<div>
+    <p>
+        <button class="btn btn-primary" id="btnToggleCreateRecord" type="button" aria-expanded="false" aria-controls="collapseCreateNewRecord">
+            Создать запись
+        </button>
+    </p>
 
-<div class="collapse" id="collapseCreateNewRecord">
-    <div>
-        @{
-            var formUrl = diaryUrl.UrlToAction<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(
-                nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.CreateNewDiaryRecord));
-        }
-        <form action="@formUrl" id="createNewDiaryForm" method="post">
-            <div class="form-group">
-                @Html.LabelFor(x => x.ShortDescription, htmlAttributes: new { @class = "control-label" })
-                @Html.EditorFor(x => x.ShortDescription, new { htmlAttributes = new { @class = "form-control" } })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(x => x.Tags, htmlAttributes: new { @class = "control-label" })
-                @Html.HiddenFor(x => x.TagInput,
-                new{
-                    @id = "hiddenTagInput"
-                })
-                <div class="tags-input" id="myTags">
-                    <span class="data container"></span>
-                    <span class="autocomplete">
-                        <input type="text">
-                        <div class="autocomplete-items"></div>
-                    </span>
+    <div class="collapse card" id="collapseCreateNewRecord">
+        <div class="card card-body">
+            @{
+                var formUrl = diaryUrl.UrlToAction<Kitakun.TagDiary.Web.Controllers.SpaceOwnerController>(
+                    nameof(Kitakun.TagDiary.Web.Controllers.SpaceOwnerController.CreateNewDiaryRecord));
+            }
+            <form action="@formUrl" id="createNewDiaryForm" method="post">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.ShortDescription, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(x => x.ShortDescription, new { htmlAttributes = new { @class = "form-control" } })
                 </div>
-            </div>
 
-            <div class="form-group">
-                @Html.LabelFor(x => x.MarkdownText, htmlAttributes: new { @class = "control-label" })
-                @Html.HiddenFor(x => x.MarkdownText,
-                new{
-                    @id = "hiddenMarkdownInput"
-                })
-                <div id="markdownInput">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.OnDate, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(x => x.OnDate, new { htmlAttributes = new { @class = "form-control" } })
                 </div>
-            </div>
 
-            <div class="form-group">
-                @Html.LabelFor(x => x.Privacy, htmlAttributes: new { @class = "control-label" })
-                @Html.DropDownListFor(x => x.Privacy, enumValues, htmlAttributes: new { @class = "form-control" })
-            </div>
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Tags, htmlAttributes: new { @class = "control-label" })
+                    @Html.HiddenFor(x => x.TagInput,
+                    new{
+                        @id = "hiddenTagInput"
+                    })
+                    <div class="tags-input" id="myTags">
+                        <span class="data container"></span>
+                        <span class="autocomplete">
+                            <input type="text">
+                            <div class="autocomplete-items"></div>
+                        </span>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                @Html.LabelFor(x => x.ProtectedByPassword, htmlAttributes: new { @class = "control-label" })
-                @Html.EditorFor(x => x.ProtectedByPassword, new { htmlAttributes = new { @class = " " } })
-            </div>
+                <div class="form-group">
+                    @Html.LabelFor(x => x.MarkdownText, htmlAttributes: new { @class = "control-label" })
+                    @Html.HiddenFor(x => x.MarkdownText,
+                    new{
+                        @id = "hiddenMarkdownInput"
+                    })
+                    <div id="markdownInput">
+                    </div>
+                </div>
 
-            <div class="form-group">
-                @Html.LabelFor(x => x.PasswordSource, htmlAttributes: new { @class = "control-label" })
-                @Html.EditorFor(x => x.PasswordSource, new { htmlAttributes = new { @class = "form-control" } })
-            </div>
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Privacy, htmlAttributes: new { @class = "control-label" })
+                    @Html.DropDownListFor(x => x.Privacy, enumValues, htmlAttributes: new { @class = "form-control" })
+                </div>
 
-            <button class="btn btn-primary" type="submit">Создать запись</button>
-        </form>
+                <div class="form-group">
+                    @Html.LabelFor(x => x.ProtectedByPassword, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(x => x.ProtectedByPassword, new { htmlAttributes = new { @class = " " } })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(x => x.PasswordSource, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(x => x.PasswordSource, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <button class="btn btn-primary" type="submit">Создать запись</button>
+            </form>
+        </div>
     </div>
 </div>
-
 
 <script type="text/javascript">
 
@@ -121,6 +127,11 @@
             $('#createNewDiaryForm').on('submit', function () {
                 $('#hiddenMarkdownInput').val(JSON.stringify(createNewRecordQuill.getContents()));
                 $('#hiddenTagInput').val($.fn.tagsValues.apply($('#myTags')).join('|'));
+            });
+
+            $('#collapseCreateNewRecord').hide();
+            $('#btnToggleCreateRecord').on('click', function () {
+                $('#collapseCreateNewRecord').slideToggle();    
             });
         });
     });

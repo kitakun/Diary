@@ -205,7 +205,7 @@
             {
                 ShortDescription = model.ShortDescription,
                 MarkdownText = model.MarkdownText,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = model.OnDate ?? DateTime.UtcNow,
                 Privacy = model.Privacy,
                 ProtectedByPassword = model.ProtectedByPassword,
                 SpaceId = spaceId,

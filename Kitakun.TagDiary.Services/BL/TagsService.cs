@@ -51,7 +51,9 @@
             var loadedUniqueTags = await _dbContext
                 .DiaryRecords
                 .Where(w => w.SpaceId == spaceId
-                    && w.Tags != null)
+                    && w.Tags != null
+                    // Теги из записей с паролем не сохраняем
+                    && w.ProtectedByPassword == false)
                 .SelectMany(sm => sm.Tags)
                 .Distinct()
                 .ToArrayAsync();

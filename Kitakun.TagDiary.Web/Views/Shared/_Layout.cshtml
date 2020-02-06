@@ -57,7 +57,7 @@
                                    asp-controller="Auth"
                                    asp-action="MoveToProvider"
                                    asp-route-providerName="vk">
-                                    VK
+                                    Войти через VK
                                 </a>
                             </li>
                         }
@@ -68,9 +68,9 @@
     </header>
     <div class="container">
         @*<partial name="_CookieConsentPartial" />*@
-        <main role="main" class="pb-3">
+        <div role="main" class="pb-3">
             @RenderBody()
-        </main>
+        </div>
     </div>
 
     <footer class="border-top footer text-muted">

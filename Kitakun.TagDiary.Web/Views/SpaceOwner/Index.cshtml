@@ -96,7 +96,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">@recordsFromGroup[i].ShortDescriptionText</h5>
-                                <h6 class="card-subtitle mb-2 text-muted text-right">@recordsFromGroup[i].CreatedAt.ToShortDateString()</h6>
+                                <h6 class="card-subtitle mb-2 text-muted text-right">@recordsFromGroup[i].CreatedAt.ToString("dd.MM.yyyy")</h6>
                                 @if (recordsFromGroup[i].Tags?.Length > 0)
                                 {
                                     for (var t = 0; t < recordsFromGroup[i].Tags.Length; t++)

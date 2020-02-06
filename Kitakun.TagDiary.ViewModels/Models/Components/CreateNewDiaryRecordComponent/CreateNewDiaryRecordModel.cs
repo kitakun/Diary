@@ -1,5 +1,6 @@
 ﻿namespace Kitakun.TagDiary.ViewModels.Models.Components.CreateNewDiaryRecordComponent
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
 
     using Kitakun.TagDiary.Core.Domain;
@@ -23,6 +24,9 @@
 
         public string[] AllowedTags { get; set; }
         public string TagInput { get; set; }
+
+        [Display(Name = "Дата записи")]
+        public DateTime? OnDate { get; set; } = DateTime.UtcNow.Date;
 
         [Display(Name = "Теги")]
         public string[] Tags { get; set; }
