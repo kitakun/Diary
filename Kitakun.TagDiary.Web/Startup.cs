@@ -34,7 +34,7 @@
             });
 
             services
-                .AddMvc()
+                .AddMvc(x => x.SslPort = Program.HttpsPort)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services
@@ -46,6 +46,21 @@
                     options.Cookie.Name = ".Diary.SharedAuth";
                     options.Cookie.Domain = Configuration.GetSection("All").GetValue<string>("DomainName");
                 });
+
+#if RELEASE
+            services.AddHsts(options =>
+            {
+                options.Preload = true;
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(60);
+            });
+
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+                options.HttpsPort = Program.HttpsPort;
+            });
+#endif
         }
 
         public void ConfigureContainer(ContainerBuilder builder) => builder.Configurate();
@@ -66,9 +81,8 @@
                 // The default HSTS value is 30 days.
                 // You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                //app.UseHttpsRedirection();
             }
-
-            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
 

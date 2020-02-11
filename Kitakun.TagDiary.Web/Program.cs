@@ -1,4 +1,4 @@
-﻿//#define USE_HTTPS
+﻿#define USE_HTTPS
 
 namespace Kitakun.TagDiary.Web
 {
@@ -21,14 +21,44 @@ namespace Kitakun.TagDiary.Web
         public const int HttpPort = 5010;
         public const int HttpsPort = 5011;
 
-        public static void Main(string[] args)
-        {
-            var buildedApp = CreateWebHostBuilder(args).Build();
-            // MigrateDbOnStartup(buildedApp);
-            buildedApp.Run();
-        }
+        public static void Main(string[] args) =>
+            CreateWebHostBuilder(args)
+                .Build()
+                // .MigrateDbOnStartup()
+                .Run();
 
-        private static void MigrateDbOnStartup(IWebHost buildedApp)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost
+                .CreateDefaultBuilder(args)
+#if RELEASE
+                .UseKestrel(c =>
+                {
+                    c.ListenAnyIP(HttpPort);
+#if USE_HTTPS
+                    c.ListenAnyIP(HttpsPort, cc =>
+                    {
+                        cc.UseHttps("TagDiary.pfx", Environment.GetEnvironmentVariable("HTTPS_PASSWORD"));
+                    });
+#endif
+                })
+#endif
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .ConfigureServices(services => services.AddAutofac())
+#if DEBUG
+                .UseUrls(urls: new string[] { $"http://*:{HttpPort}" })
+#endif
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddConsole();
+                    logging.AddDebug();
+                })
+                .UseStartup<Startup>();
+    }
+
+    internal static class ProgramExtensions
+    {
+        public static IWebHost MigrateDbOnStartup(this IWebHost buildedApp)
         {
             using (var scope = buildedApp.Services.CreateScope())
             {
@@ -47,41 +77,14 @@ namespace Kitakun.TagDiary.Web
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occu rred seeding the DB.");
+                    logger.LogError(ex, "An error occured while seeding DataBase.");
+#if Debug
                     Console.ReadKey();
-                    return;
+#endif
+                    return buildedApp;
                 }
             }
+            return buildedApp;
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-#if RELEASE
-                .UseKestrel(c =>
-                {
-                    c.ListenAnyIP(HttpPort);
-#if USE_HTTPS
-                    c.ListenAnyIP(HttpsPort, cc =>
-                    {
-                        cc.UseHttps("qwe.pfx", "qwe");
-                    });
-#endif
-                })
-#endif
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureServices(services => services.AddAutofac())
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                
-#if DEBUG
-                .UseUrls(urls: new string[] { $"http://*:{HttpPort}", $"https://*:{HttpsPort}" })
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole();
-                    logging.AddDebug();
-                })
-#endif
-                .UseStartup<Startup>();
     }
 }
