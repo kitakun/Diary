@@ -45,7 +45,7 @@ namespace Kitakun.TagDiary.Web
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureServices(services => services.AddAutofac())
 #if DEBUG
-                .UseUrls(urls: new string[] { $"http://*:{HttpPort}" })
+                .UseUrls(urls: new string[] { $"http://*:{HttpPort}", $"https://*:{HttpsPort}" })
 #endif
                 .ConfigureLogging((hostingContext, logging) =>
                 {

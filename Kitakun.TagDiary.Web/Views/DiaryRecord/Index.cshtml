@@ -44,7 +44,7 @@
                 readOnly: true,
                 theme: 'snow'
             });
-            quill.setContents(JSON.parse(document.getElementById('textContent').innerHTML));
+            quill.setContents(JSON.parse(document.getElementById('textContent').innerText));
 
             insertParam('recordKey', '@Model.TokenUrl');
         });
