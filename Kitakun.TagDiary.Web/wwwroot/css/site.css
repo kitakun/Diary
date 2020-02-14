@@ -46,6 +46,7 @@ html {
 body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
+    background-color: #f5f6fa;
 }
 
 .footer {
@@ -112,4 +113,14 @@ body {
 
 .separator::after {
     margin-left: .25em;
+}
+
+.card {
+    border-radius: .25rem;
+    border: 0px;
+    box-shadow: 0 0 1px rgba(240,242,247,0.1),0 6px 7px rgba(0,32,128,0.1);
+}
+
+.ql-container.ql-snow{
+    background-color: #fff;
 }
