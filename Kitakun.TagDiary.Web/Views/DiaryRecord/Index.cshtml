@@ -6,6 +6,16 @@
     var formPostHref = diaryUrl.UrlToAction<Kitakun.TagDiary.Web.Controllers.DiaryRecordController>(nameof(Kitakun.TagDiary.Web.Controllers.DiaryRecordController.Index));
 }
 
+@section metatags{
+    <meta charset="utf-8">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Write it record" />
+
+    <meta property="og:description" content="@(Model.ShortDescription)" />
+    <meta property="og:url" content="https://writeitdown.ru" />
+    <meta property="og:image" content="" />
+}
+
 <div class="row">
     @if (Model.ProtectedByPassword)
     {

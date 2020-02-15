@@ -79,6 +79,7 @@
                 <button class="btn btn-primary" type="submit">Создать запись</button>
             </form>
         </div>
+        <div id="ccnr_overlay" class="doverlay"></div>
     </div>
 </div>
 
@@ -127,6 +128,7 @@
             $('#createNewDiaryForm').on('submit', function () {
                 $('#hiddenMarkdownInput').val(JSON.stringify(createNewRecordQuill.getContents()));
                 $('#hiddenTagInput').val($.fn.tagsValues.apply($('#myTags')).join('|'));
+                $('#ccnr_overlay').addClass('en');
             });
 
             $('#collapseCreateNewRecord').hide();
