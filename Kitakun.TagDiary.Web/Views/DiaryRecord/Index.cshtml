@@ -9,11 +9,11 @@
 @section metatags{
     <meta charset="utf-8">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Write it record" />
-
-    <meta property="og:description" content="@(Model.ShortDescription)" />
-    <meta property="og:url" content="https://writeitdown.ru" />
-    <meta property="og:image" content="" />
+    <meta property="og:title" content="@(Model.ShortDescription)" />
+    
+    <meta property="og:description" content="Write it record" />
+    <meta property="og:url" content="@($"https://{this.Context.Request.Host}{this.Context.Request.Path}")" />
+    <meta property="og:image" content="@($"https://{this.Context.Request.Host}/img/metaimg.png")" />
 }
 
 <div class="row">

@@ -1665,6 +1665,7 @@
 
 
   <ItemGroup>
+    <Folder Include="wwwroot\img\" />
     <Folder Include="wwwroot\Ring\" />
   </ItemGroup>
 
