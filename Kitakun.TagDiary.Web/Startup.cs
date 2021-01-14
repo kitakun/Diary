@@ -11,6 +11,7 @@
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
 
     using Kitakun.TagDiary.Web.Infrastructure;
     using Kitakun.TagDiary.Web.Extensions;
@@ -33,9 +34,12 @@
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services
-                .AddMvc(x => x.SslPort = Program.HttpsPort)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(x =>
+            {
+                x.SslPort = Program.HttpsPort;
+                // for razor
+                x.EnableEndpointRouting = false;
+            });
 
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -65,7 +69,7 @@
 
         public void ConfigureContainer(ContainerBuilder builder) => builder.Configurate();
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCookiePolicy();
             app.UseAuthentication();
@@ -109,7 +113,6 @@
                     name: "auth",
                     template: "externalAuth/{providerName}",
                     defaults: new { controller = "Auth", action = "ExternalAuth" });
-
             });
         }
     }

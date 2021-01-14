@@ -4,7 +4,6 @@
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 
     using Kitakun.TagDiary.Core.Services;
 
@@ -21,7 +20,7 @@
         {
             if (context.Result is ViewResult viewResult)
             {
-                dynamic viewBag = new DynamicViewData(() => viewResult.ViewData);
+                dynamic viewBag = viewResult.ViewData; // new DynamicViewData(() => viewResult.ViewData);
                 viewBag.Title = _webContext.CurrentSpaceUrlPrefix;
             }
 
