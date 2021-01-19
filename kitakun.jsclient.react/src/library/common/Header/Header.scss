@@ -1,0 +1,61 @@
+.app-header {
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: left;
+    background-color: #fff;
+    .navbar {
+        height: 57px;
+        box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, .05);
+        margin-bottom: 1rem !important;
+        background-color: #fff !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        // container styles
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        .navbar-brand {
+            text-decoration: none;
+            color: rgba(0, 0, 0, 0.9);
+            white-space: normal;
+            text-align: center;
+            word-break: break-all;
+            display: inline-block;
+            padding-top: 0.3125rem;
+            padding-bottom: 0.3125rem;
+            margin-right: 1rem;
+            font-size: 1.25rem;
+            line-height: inherit;
+        }
+        .header-links-navmenu {
+            flex-direction: row;
+            flex-grow: 1;
+            display: flex;
+            padding-left: 0;
+            margin-bottom: 0;
+            list-style: none;
+            margin-top: 0;
+            .nav-link {
+                color: #343a40;
+                display: block;
+                padding: 0.5rem 1rem;
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+.svg-inline {
+    width: 1em;
+    display: inline-block;
+    font-size: inherit;
+    height: 1em;
+    overflow: visible;
+    vertical-align: -.125em;
+}
+
+.header-container {
+    display: flex;
+}
