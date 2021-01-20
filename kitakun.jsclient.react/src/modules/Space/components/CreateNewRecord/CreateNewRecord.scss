@@ -1,0 +1,38 @@
+$panel-height: 700px;
+$panel-vertical-padding: 20px;
+.create-new-record {
+    transition: all 400ms ease;
+    overflow: hidden;
+    max-height: inherit;
+    opacity: 0;
+    margin-top: 0px;
+    &.create-record-animation-enter {
+        opacity: 0;
+        max-height: 0;
+        padding: 0px $panel-vertical-padding;
+        margin-top: 0px;
+    }
+    &.create-record-animation-enter-active {
+        opacity: 1;
+        padding: $panel-vertical-padding;
+        max-height: $panel-height;
+        margin-top: $panel-vertical-padding;
+    }
+    // opened
+    &.create-record-animation-enter-done {
+        opacity: 1;
+        margin-top: $panel-vertical-padding;
+    }
+    &.create-record-animation-exit {
+        opacity: 0;
+        max-height: $panel-height;
+    }
+    &.create-record-animation-exit-active {
+        max-height: 0;
+        padding: 0px $panel-vertical-padding;
+    }
+}
+
+.create-record-button {
+    margin-top: 20px;
+}

@@ -2,7 +2,9 @@ import React from 'react';
 import './Welcome.scss';
 // Locals
 import { IReactPropType } from 'types';
-import Panel from 'library/common/Panel/Panel';
+// Local components
+import Panel from 'library/common/Layout/Panel/Panel';
+import LinkToDiaryButton from 'library/common/Controls/LinkToDiaryButton/LinkToDiaryButton';
 
 function WelcomePage(props: IReactPropType) {
     return (
@@ -22,7 +24,9 @@ function WelcomePage(props: IReactPropType) {
                     </ol>
                 </div>
                 <div>
-                    <span className="text-muted">Для создания дневника войдите в систему</span>
+                    {/* <span className="text-muted">Для создания дневника войдите в систему</span> */}
+                    <LinkToDiaryButton spaceId="1" text="Открыть ваш дневник"></LinkToDiaryButton>
+                    {/* <LinkToDiaryButton spaceId="0" text="Создать свой дневник"></LinkToDiaryButton> */}
                 </div>
             </div>
         </Panel>
