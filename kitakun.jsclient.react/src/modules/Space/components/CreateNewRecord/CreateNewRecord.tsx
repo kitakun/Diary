@@ -24,9 +24,7 @@ function CreateNewRecord(props: ICreateNewRecordProp) {
         },
     ] as ISelectOption[];
     const [isVisible, setVisible] = useState<boolean>(false)
-    const onToggleCreateNewRecord = () => {
-        setVisible(!isVisible);
-    };
+    const onToggleCreateNewRecord = () => setVisible(!isVisible);
 
     return (
         <div >
