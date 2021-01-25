@@ -1,3 +1,10 @@
+export interface ISpace {
+    id: string;
+    humanName: string;
+    urlName: string;
+    recordPreviews?: ISpaceRecordPreview[];
+}
+
 export interface ISpaceRecordPreview {
     id: string;
     title: string;
@@ -6,9 +13,9 @@ export interface ISpaceRecordPreview {
 }
 
 export interface ISpaceRecord {
-    id: string;
+    id?: string;
     tokenUrl: string;
-    createdAt: Date;
+    createdAt?: Date;
     shortDescription: string;
     markdownText: string;
 }

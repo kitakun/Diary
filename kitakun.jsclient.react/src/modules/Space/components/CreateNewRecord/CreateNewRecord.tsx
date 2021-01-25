@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { Dispatch, useState } from 'react';
 import { CSSTransition, Transition } from 'react-transition-group';
+// redux
+import { useDispatch } from 'react-redux';
 // Locals
-import { IReactPropType } from 'types';
+import { IReactPropType, ISpaceRecord } from 'types';
 import './CreateNewRecord.scss';
 // Components
 import Panel from 'library/common/Layout/Panel/Panel';
@@ -9,7 +11,15 @@ import TagSelector from 'library/common/Controls/TagSelector/TagSelector';
 import Wysiwyg from 'library/common/Controls/Wysiwyg/Wysiwyg';
 import Selector, { ISelectOption } from 'library/common/Controls/Selector/Selector';
 
+const tempData = {
+    createdAt: new Date(),
+    markdownText: 'hi',
+    shortDescription: 'hi descr',
+    tokenUrl: 'hellow',
+} as ISpaceRecord;
+
 interface ICreateNewRecordProp extends IReactPropType {
+    createNewRecord(newRecord: ISpaceRecord): void;
 }
 
 function CreateNewRecord(props: ICreateNewRecordProp) {
@@ -23,8 +33,15 @@ function CreateNewRecord(props: ICreateNewRecordProp) {
             label: 'Доступ по ссылке'
         },
     ] as ISelectOption[];
+    //states
     const [isVisible, setVisible] = useState<boolean>(false)
     const onToggleCreateNewRecord = () => setVisible(!isVisible);
+    // redux
+    const dispatch = useDispatch() as Dispatch<any>;
+    const createRecord = React.useCallback(
+        (record: ISpaceRecord) => dispatch(props.createNewRecord(record)),
+        [dispatch, props.createNewRecord]
+    );
 
     return (
         <div >
@@ -78,9 +95,9 @@ function CreateNewRecord(props: ICreateNewRecordProp) {
                             <input className="form-control" id="codePass" name="codePass" />
                         </div>
 
-                        <button className="btn" type="button" aria-expanded="false">
+                        <button className="btn" onClick={() => createRecord(tempData)} type="button" aria-expanded="false">
                             Создать запись
-                    </button>
+                        </button>
                     </form>
                 </Panel>
             </CSSTransition>

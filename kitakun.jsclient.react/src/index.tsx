@@ -3,16 +3,31 @@ import ReactDOM from 'react-dom';
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import reportWebVitals from './reportWebVitals';
+// redux
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+// redux stores
+import spaceReducer from './store/space/space.reducer'
 // Locals
 import App from './main/App';
+import { IRootStore } from 'types';
 
 const customHistory = createBrowserHistory();
+// redux
+const rootReducer = combineReducers<IRootStore>(
+  {
+    spaceStore: spaceReducer,
+  });
+const rootStore = createStore(rootReducer, applyMiddleware(thunk));
 
 ReactDOM.render(
   <React.StrictMode>
-    <Router history={customHistory}>
-      <App />
-    </Router>
+    <Provider store={rootStore}>
+      <Router history={customHistory}>
+        <App />
+      </Router>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
