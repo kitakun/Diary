@@ -1,8 +1,11 @@
 import { EmitDispatchType, IStoreAction } from 'store/base.store';
-import { ISpace, LoadingState } from 'types';
+import { ISpace, ISpaceRecordPreview, LoadingState } from 'types';
 
 export type SpaceState = {
-    state: LoadingState;
+    // welcome state
+    welcomeRecordsState: LoadingState;
+    welcomeRecordsPreview: ISpaceRecordPreview[];
+    // 
     spaces: ISpace[];
 }
 

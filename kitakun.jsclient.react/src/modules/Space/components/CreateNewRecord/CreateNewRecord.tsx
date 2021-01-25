@@ -1,5 +1,5 @@
 import React, { Dispatch, useState } from 'react';
-import { CSSTransition, Transition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 // redux
 import { useDispatch } from 'react-redux';
 // Locals

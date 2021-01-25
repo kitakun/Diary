@@ -17,12 +17,10 @@ function AppRoutes() {
                 <Route path="/space-not-found/:spaceId">
                     <NotFoundSpace />
                 </Route>
-                <Route path="/space/:spaceId/view/:recordId" component={RecordViewPage}></Route>
-                <Route path="/space/:spaceId" component={SpacePage}></Route>
+                <Route path="/space/:spaceId/view/:recordId" component={RecordViewPage} />
+                <Route path="/space/:spaceId" component={SpacePage} />
                 {/* Default path */}
-                <Route path="/">
-                    <WelcomePage />
-                </Route>
+                <Route path="/" component={WelcomePage} />
             </Switch>
         </div>
     );

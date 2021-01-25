@@ -7,7 +7,10 @@ import {
 } from './space.types';
 
 const initialState: SpaceState = {
-    state: LoadingState.NotLoaded,
+    // welcome records preview
+    welcomeRecordsState: LoadingState.NotLoaded,
+    welcomeRecordsPreview: [],
+    //
     spaces: [],
 }
 
@@ -16,8 +19,6 @@ const reducer = (
     action: IStoreAction,
 ): SpaceState => {
     switch (action.type) {
-        case actionTypes.ADD_SPACE:
-            break;
         case actionTypes.UPDATE_STATE:
             const newData = (action as SpaceStateAction).newStateVals;
             return {

@@ -7,6 +7,7 @@ export interface ISpace {
 
 export interface ISpaceRecordPreview {
     id: string;
+    spaceId: string;
     title: string;
     date: Date;
     tags: string[];

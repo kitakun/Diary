@@ -1,5 +1,5 @@
 import { dispatchStoreAction } from "store/base.store"
-import { ISpace, ISpaceRecord } from "../../types"
+import { ISpaceRecord } from "../../types"
 import * as actionTypes from "./record.actionTypes"
 import { RecordAction } from "./record.types"
 

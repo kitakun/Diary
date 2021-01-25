@@ -7,8 +7,9 @@ import reportWebVitals from './reportWebVitals';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
+import { composeWithDevTools } from 'redux-devtools-extension';
 // redux stores
-import spaceReducer from './store/space/space.reducer'
+import spaceReducer from './store/space/space.reducer';
 // Locals
 import App from './main/App';
 import { IRootStore } from 'types';
@@ -19,7 +20,8 @@ const rootReducer = combineReducers<IRootStore>(
   {
     spaceStore: spaceReducer,
   });
-const rootStore = createStore(rootReducer, applyMiddleware(thunk));
+const reduxDevStore = composeWithDevTools(applyMiddleware(thunk));
+const rootStore = createStore(rootReducer, reduxDevStore);
 
 ReactDOM.render(
   <React.StrictMode>

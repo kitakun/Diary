@@ -1,11 +1,20 @@
 @import '../../../../resourecs/styles/functions';
-.d-grid {
+.p-grid {
     display: flex;
+    flex-direction: column;
     column-gap: 1.25rem;
+    .p-elements-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        column-gap: 16px;
+        margin-bottom: 16px;
+    }
 }
 
-.d-card {
+.p-card {
     flex: 1 1 auto;
+    max-width: 300px;
     border-radius: .25rem;
     border: 0px;
     box-shadow: 0 0 1px rgba(240, 242, 247, 0.1), 0 6px 7px rgba(0, 32, 128, 0.1);
@@ -14,6 +23,7 @@
     .card-body {
         flex: 1 1 auto;
         padding: 1.25rem;
+        min-height: 95px;
         .card-title {
             margin-bottom: 0.75rem;
             font-size: 1.25rem;
@@ -55,10 +65,10 @@
             }
         }
         .float-right {
-            float: right;
             a {
                 text-decoration: none;
-                color: #007bff;
+                color: darkgrey;
+                font-weight: bold;
             }
         }
     }

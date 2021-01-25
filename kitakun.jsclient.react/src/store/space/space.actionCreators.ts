@@ -4,12 +4,12 @@ import { LoadingState } from "types"
 import * as actionTypes from "./space.actionTypes"
 import { DispatchType, SpaceAction, SpaceState, SpaceStateAction } from "./space.types"
 
-export function fetchSpacesPreview() {
+export function fetchWelcomePreview() {
     const action: SpaceAction = {
-        type: actionTypes.FETCH_SPACES_PREVIEW,
+        type: actionTypes.FETCH_SPACES_WELCOME_PREVIEW,
     };
 
-    return loadLastSpaces(action);
+    return loadWelcomePreviews(action);
 }
 
 function internalUpdateState(newStateVals: Partial<SpaceState>) {
@@ -18,40 +18,55 @@ function internalUpdateState(newStateVals: Partial<SpaceState>) {
         newStateVals,
     };
 
-    return dispatchStoreAction(action)
+    return dispatchStoreAction(action);
 }
 
-export function loadLastSpaces(action: SpaceAction) : ThunkResult<Promise<void>> {
+export function loadWelcomePreviews(action: SpaceAction): ThunkResult<Promise<void>> {
+    dispatchStoreAction(action);
     return async (dispatch: DispatchType) => {
         dispatch(
-            internalUpdateState({
-                state: LoadingState.InLoading,
-            })
+            internalUpdateState({ welcomeRecordsState: LoadingState.InLoading })
         );
         try {
-            await delay(500);
+            await delay(2500);
             dispatch(
                 internalUpdateState({
-                    state: LoadingState.Loaded,
-                    spaces: [
+                    welcomeRecordsState: LoadingState.Loaded,
+                    welcomeRecordsPreview: [
                         {
                             id: '1',
-                            humanName: 'test1',
-                            urlName: 'url1',
+                            title: 'hi1',
+                            tags: ['hi1'],
+                            date: new Date(),
+                            spaceId: '1',
                         },
                         {
                             id: '2',
-                            humanName: 'test2',
-                            urlName: 'url2',
+                            title: 'hi2',
+                            tags: ['hi2'],
+                            date: new Date(),
+                            spaceId: '1',
+                        },
+                        {
+                            id: '3',
+                            title: 'hi3',
+                            tags: ['hi2'],
+                            date: new Date(),
+                            spaceId: '1',
+                        },
+                        {
+                            id: '4',
+                            title: 'hi4',
+                            tags: ['hi2'],
+                            date: new Date(),
+                            spaceId: '1',
                         }
                     ]
                 })
             );
         } catch (er) {
             dispatch(
-                internalUpdateState({
-                    state: LoadingState.Error,
-                })
+                internalUpdateState({ welcomeRecordsState: LoadingState.Error })
             );
         }
     }

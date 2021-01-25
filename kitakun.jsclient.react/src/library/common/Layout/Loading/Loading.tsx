@@ -1,11 +1,17 @@
 import React from 'react';
+import classNames from 'classnames';
 // Locals
+import './Loading.scss';
+import { IReactPropType } from 'types';
 
-function Loading() {
+interface IPanelProps extends IReactPropType {
+    classNames?: string | string[];
+}
+
+
+function Loading(props: IPanelProps) {
     return (
-        <div>
-            Loading...
-        </div>
+        <div className={classNames('spinner-loader', props.classNames)}>Loading...</div>
     );
 }
 

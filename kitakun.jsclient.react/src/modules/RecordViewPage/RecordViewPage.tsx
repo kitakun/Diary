@@ -25,6 +25,7 @@ function RecordViewPage(props: IReactPropType) {
                     id: '123',
                     tags: ['loaded', 'wah'],
                     title: 'Loaded!!',
+                    spaceId: '1'
                 }
             });
         }, 2000);
