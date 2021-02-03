@@ -1,0 +1,30 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Kitakun.TagDiary.Web";
+
+package home;
+
+import "google/protobuf/timestamp.proto";
+// import "google/protobuf/wrappers.proto";
+
+service Home {
+  // Load main page preview records
+  rpc FetchHomePreviewRecords(FetchHomePreviewRecordsRequest) returns (FetchHomePreviewRecordsResponse);
+}
+
+// FetchHomePreviewRecords
+
+message FetchHomePreviewRecordsRequest {
+}
+
+message HomePreveiwRecordItem {
+    string id = 1;
+    string spaceId = 2;
+    string title = 3;
+    google.protobuf.Timestamp date = 4;
+    repeated string tags = 5;
+}
+
+message FetchHomePreviewRecordsResponse {
+    repeated HomePreveiwRecordItem records = 1;
+}

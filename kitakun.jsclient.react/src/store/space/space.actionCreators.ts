@@ -1,6 +1,12 @@
+// grpc
+import { FetchHomePreviewRecordsRequest, FetchHomePreviewRecordsResponse } from '../../client/home_pb';
+import { HomeClient } from '../../client/home_pb_service';
+import { toPromiseAny } from '../../client/grpc.utils';
+import { HOST_URL } from '../../client/grpc.config';
+// locals
 import { delay } from "library/utils";
 import { dispatchStoreAction, ThunkResult } from "store/base.store";
-import { LoadingState } from "types"
+import { ISpaceRecordPreview, LoadingState } from "types"
 import * as actionTypes from "./space.actionTypes"
 import { DispatchType, SpaceAction, SpaceState, SpaceStateAction } from "./space.types"
 
@@ -29,42 +35,28 @@ export function loadWelcomePreviews(action: SpaceAction): ThunkResult<Promise<vo
         );
         try {
             await delay(2500);
+
+            const client = new HomeClient(HOST_URL);
+            const grpcResponse = await toPromiseAny<FetchHomePreviewRecordsResponse>(
+                client.fetchHomePreviewRecords.bind(client),
+                new FetchHomePreviewRecordsRequest());
+
             dispatch(
                 internalUpdateState({
                     welcomeRecordsState: LoadingState.Loaded,
-                    welcomeRecordsPreview: [
-                        {
-                            id: '1',
-                            title: 'hi1',
-                            tags: ['hi1'],
-                            date: new Date(),
-                            spaceId: '1',
-                        },
-                        {
-                            id: '2',
-                            title: 'hi2',
-                            tags: ['hi2'],
-                            date: new Date(),
-                            spaceId: '1',
-                        },
-                        {
-                            id: '3',
-                            title: 'hi3',
-                            tags: ['hi2'],
-                            date: new Date(),
-                            spaceId: '1',
-                        },
-                        {
-                            id: '4',
-                            title: 'hi4',
-                            tags: ['hi2'],
-                            date: new Date(),
-                            spaceId: '1',
-                        }
-                    ]
+                    welcomeRecordsPreview: grpcResponse?.getRecordsList().map(m => {
+                        return {
+                            id: m.getId(),
+                            date: m.getDate()?.toDate(),
+                            spaceId: m.getSpaceid(),
+                            title: m.getTitle(),
+                            tags: m.getTagsList(),
+                        } as ISpaceRecordPreview;
+                    })
                 })
             );
         } catch (er) {
+            console.error(er);
             dispatch(
                 internalUpdateState({ welcomeRecordsState: LoadingState.Error })
             );

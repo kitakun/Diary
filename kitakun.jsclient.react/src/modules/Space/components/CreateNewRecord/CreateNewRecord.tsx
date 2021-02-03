@@ -40,6 +40,7 @@ function CreateNewRecord(props: ICreateNewRecordProp) {
     const dispatch = useDispatch() as Dispatch<any>;
     const createRecord = React.useCallback(
         (record: ISpaceRecord) => dispatch(props.createNewRecord(record)),
+        // eslint-disable-next-line
         [dispatch, props.createNewRecord]
     );
 

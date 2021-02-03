@@ -67,8 +67,10 @@
         .float-right {
             a {
                 text-decoration: none;
-                color: darkgrey;
-                font-weight: bold;
+                color: #6c757d;
+                &:hover {
+                    text-decoration: underline;
+                }
             }
         }
     }
