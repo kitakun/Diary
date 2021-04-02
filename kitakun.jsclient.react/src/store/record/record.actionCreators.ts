@@ -8,7 +8,7 @@ export function createRecord(record: ISpaceRecord) {
         type: actionTypes.CREATE_NEW_RECORD,
         record,
     }
-
+debugger
     return dispatchStoreAction(action);
 }
 

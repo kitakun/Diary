@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 // redux
 import { useDispatch } from 'react-redux';
 // Locals
-import { IReactPropType, ISpaceRecord } from 'types';
+import { ICreateSpaceRecord, IReactPropType, ISpaceRecord } from 'types';
 import './CreateNewRecord.scss';
 // Components
 import Panel from 'library/common/Layout/Panel/Panel';
@@ -14,40 +14,55 @@ import TagSelector from 'library/common/Controls/TagSelector/TagSelector';
 import Wysiwyg from 'library/common/Controls/Wysiwyg/Wysiwyg';
 import Selector, { ISelectOption } from 'library/common/Controls/Selector/Selector';
 
-const tempData = {
-    createdAt: new Date(),
-    markdownText: 'hi',
-    shortDescription: 'hi descr',
-    tokenUrl: 'hellow',
-} as ISpaceRecord;
-
 interface ICreateNewRecordProp extends IReactPropType {
-    createNewRecord(newRecord: ISpaceRecord): void;
+    createNewRecord(newRecord: ICreateSpaceRecord): void;
 }
 
+const protectionOptions = [
+    {
+        value: '0',
+        label: 'Видим всем'
+    },
+    {
+        value: '1',
+        label: 'Доступ по ссылке'
+    },
+] as ISelectOption[];
+
 function CreateNewRecord(props: ICreateNewRecordProp) {
-    const protectionOptions = [
-        {
-            value: '0',
-            label: 'Видим всем'
-        },
-        {
-            value: '1',
-            label: 'Доступ по ссылке'
-        },
-    ] as ISelectOption[];
     // states
     const [isVisible, setVisible] = useState<boolean>(false)
     const onToggleCreateNewRecord = () => setVisible(!isVisible);
+    // datetime
     const [startDate, setStartDate] = useState(new Date());
     const setDateAction = (date: Date) => setStartDate(date);
+    // tags
+    const [selectedTags, setSelectedTags] = useState([] as string[]);
+    // long text
+    const [wysiwygValue, setWysiwygValue] = useState('');
+    // visibility option
+    const [selectedVisibilityOption, setVisbilityOption] = useState<ISelectOption>(protectionOptions[0]);
     // redux
     const dispatch = useDispatch() as Dispatch<any>;
-    const createRecord = React.useCallback(
-        (record: ISpaceRecord) => dispatch(props.createNewRecord(record)),
-        // eslint-disable-next-line
-        [dispatch, props.createNewRecord]
-    );
+
+    // refs
+    const shortDescription = React.createRef() as React.RefObject<HTMLInputElement>;
+    const protectWithPassBool = React.createRef() as React.RefObject<HTMLInputElement>;
+    const passwordRef = React.createRef() as React.RefObject<HTMLInputElement>;
+    // create callback
+    const callCreateRecord = () => {
+        const recordData = {
+            markdownText: wysiwygValue,
+            shortDescription: shortDescription.current?.value,
+            createdAt: startDate,
+            selectedTags: selectedTags,
+            visibilityOption: selectedVisibilityOption,
+            protectedByPassword: protectWithPassBool.current?.checked,
+            password: passwordRef.current?.value,
+        } as ICreateSpaceRecord;
+
+        dispatch(props.createNewRecord(recordData));
+    };
 
     return (
         <div >
@@ -66,43 +81,43 @@ function CreateNewRecord(props: ICreateNewRecordProp) {
                     <form>
                         <div className="form-group">
                             <label className="control-label" htmlFor="ShortDescription">Краткое описание</label>
-                            <input className="form-control" id="ShortDescription" name="ShortDescription" type="text" />
+                            <input className="form-control" ref={shortDescription} type="text" />
                         </div>
 
                         <div className="form-group">
                             <label className="control-label" htmlFor="OnDate">Дата записи</label>
-                            <DatePicker className="form-control" selected={startDate} onChange={setDateAction} />
+                            <div>
+                                <DatePicker className="form-control" selected={startDate} onChange={setDateAction} />
+                            </div>
                             {/* <input className="form-control" id="OnDate" name="OnDate" type="datetime-local" readOnly value="2021-01-19T00:00:00.000" /> */}
                         </div>
 
                         <div className="form-group">
                             <label className="control-label" htmlFor="tagSelector">Теги</label>
-                            <TagSelector></TagSelector>
+                            <TagSelector presettedTags={selectedTags} onChanged={setSelectedTags}></TagSelector>
                         </div>
 
                         <div className="form-group">
                             <label className="control-label" htmlFor="insideText">Внутренний текст</label>
-                            {/* <input className="form-control" id="insideText" name="insideText" /> */}
-                            <Wysiwyg></Wysiwyg>
+                            <Wysiwyg initialValue={wysiwygValue} setValue={setWysiwygValue}></Wysiwyg>
                         </div>
 
                         <div className="form-group">
                             <label className="control-label" htmlFor="insideText">Настройки приватности</label>
-                            {/* <input className="form-control" id="insideText" name="insideText" /> */}
-                            <Selector values={protectionOptions}></Selector>
+                            <Selector values={protectionOptions} onChanged={setVisbilityOption}></Selector>
                         </div>
 
                         <div className="form-group">
                             <label className="control-label" htmlFor="codeText">Закодировать текст</label>
-                            <input className="form-control" type="checkbox" id="codeText" name="codeText" />
+                            <input className="form-control" ref={protectWithPassBool} type="checkbox" id="codeText" name="codeText" />
                         </div>
 
                         <div className="form-group">
                             <label className="control-label" htmlFor="codePass">Пароль</label>
-                            <input className="form-control" type="password" id="codePass" name="codePass" />
+                            <input className="form-control" ref={passwordRef} type="password" id="codePass" name="codePass" />
                         </div>
 
-                        <button className="btn" onClick={() => createRecord(tempData)} type="button" aria-expanded="false">
+                        <button className="btn" onClick={callCreateRecord} type="button" aria-expanded="false">
                             Создать запись
                         </button>
                     </form>

@@ -1,3 +1,5 @@
+import { ISelectOption } from "library/common/Controls/Selector/Selector";
+
 export interface ISpace {
     id: string;
     humanName: string;
@@ -19,4 +21,11 @@ export interface ISpaceRecord {
     createdAt?: Date;
     shortDescription: string;
     markdownText: string;
+    selectedTags: string[],
+    visibilityOption: ISelectOption,
+}
+
+export interface ICreateSpaceRecord extends ISpaceRecord {
+    protectedByPassword?: boolean;
+    password?: string;
 }

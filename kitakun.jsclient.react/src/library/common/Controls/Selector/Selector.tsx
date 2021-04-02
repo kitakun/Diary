@@ -3,6 +3,7 @@ import Select from 'react-select';
 
 interface ISelectOptionProps {
     values: ISelectOption[];
+    onChanged?: React.Dispatch<React.SetStateAction<ISelectOption>> | undefined;
 }
 
 export interface ISelectOption {
@@ -10,25 +11,23 @@ export interface ISelectOption {
     label: string;
 }
 
-export default class Selector extends React.Component<ISelectOptionProps, {}> {
-    state = {
-        selectedOption: null,
-    };
-    handleChange = (selectedOption: any) => {
-        this.setState(
-            { selectedOption },
-            () => console.log(`Option selected:`, this.state.selectedOption)
-        );
-    };
-    render() {
-        const { selectedOption } = this.state;
+export default function Selector(props: ISelectOptionProps) {
+    const [selectedOption, setSelectedOption] = React.useState(props.values[0])
 
-        return (
-            <Select
-                value={selectedOption}
-                onChange={this.handleChange}
-                options={this.props.values}
-            />
-        );
-    }
+    return (
+        <Select
+            value={selectedOption}
+            onChange={(newVal) => {
+                const selectedData = {
+                    label: newVal!.label,
+                    value: newVal!.value,
+                };
+                setSelectedOption(selectedData);
+                if (props.onChanged) {
+                    props.onChanged(selectedData);
+                }
+            }}
+            options={props.values}
+        />
+    );
 }
