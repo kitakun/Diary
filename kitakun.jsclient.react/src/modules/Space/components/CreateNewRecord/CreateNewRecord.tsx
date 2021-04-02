@@ -1,5 +1,8 @@
 import React, { Dispatch, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
+// datepicker
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 // redux
 import { useDispatch } from 'react-redux';
 // Locals
@@ -33,9 +36,11 @@ function CreateNewRecord(props: ICreateNewRecordProp) {
             label: 'Доступ по ссылке'
         },
     ] as ISelectOption[];
-    //states
+    // states
     const [isVisible, setVisible] = useState<boolean>(false)
     const onToggleCreateNewRecord = () => setVisible(!isVisible);
+    const [startDate, setStartDate] = useState(new Date());
+    const setDateAction = (date: Date) => setStartDate(date);
     // redux
     const dispatch = useDispatch() as Dispatch<any>;
     const createRecord = React.useCallback(
@@ -61,12 +66,13 @@ function CreateNewRecord(props: ICreateNewRecordProp) {
                     <form>
                         <div className="form-group">
                             <label className="control-label" htmlFor="ShortDescription">Краткое описание</label>
-                            <input className="form-control" id="ShortDescription" name="ShortDescription" type="text" readOnly value="" />
+                            <input className="form-control" id="ShortDescription" name="ShortDescription" type="text" />
                         </div>
 
                         <div className="form-group">
                             <label className="control-label" htmlFor="OnDate">Дата записи</label>
-                            <input className="form-control" id="OnDate" name="OnDate" type="datetime-local" readOnly value="2021-01-19T00:00:00.000" />
+                            <DatePicker className="form-control" selected={startDate} onChange={setDateAction} />
+                            {/* <input className="form-control" id="OnDate" name="OnDate" type="datetime-local" readOnly value="2021-01-19T00:00:00.000" /> */}
                         </div>
 
                         <div className="form-group">
@@ -93,7 +99,7 @@ function CreateNewRecord(props: ICreateNewRecordProp) {
 
                         <div className="form-group">
                             <label className="control-label" htmlFor="codePass">Пароль</label>
-                            <input className="form-control" id="codePass" name="codePass" />
+                            <input className="form-control" type="password" id="codePass" name="codePass" />
                         </div>
 
                         <button className="btn" onClick={() => createRecord(tempData)} type="button" aria-expanded="false">
