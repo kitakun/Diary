@@ -261,3 +261,6 @@ __pycache__/
 *.pyc
 PublishFoldier/
 Kitakun.TagDiary.Web/wwwroot/Ring/
+
+# rect client
+kitakun.jsclient.react/src/client/**

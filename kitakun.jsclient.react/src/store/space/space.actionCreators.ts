@@ -1,10 +1,8 @@
 // grpc
-import { FetchHomePreviewRecordsRequest, FetchHomePreviewRecordsResponse } from '../../client/home_pb';
-import { HomeClient } from '../../client/home_pb_service';
-import { toPromiseAny } from '../../client/grpc.utils';
-import { HOST_URL } from '../../client/grpc.config';
+import { HomeClient } from "client/HomeServiceClientPb";
+import { FetchHomePreviewRecordsRequest } from "client/home_pb";
 // locals
-import { delay } from "library/utils";
+import { createClient, delay } from "library/utils";
 import { dispatchStoreAction, ThunkResult } from "store/base.store";
 import { ISpaceRecordPreview, LoadingState } from "types"
 import * as actionTypes from "./space.actionTypes"
@@ -36,10 +34,8 @@ export function loadWelcomePreviews(action: SpaceAction): ThunkResult<Promise<vo
         try {
             await delay(2500);
 
-            const client = new HomeClient(HOST_URL);
-            const grpcResponse = await toPromiseAny<FetchHomePreviewRecordsResponse>(
-                client.fetchHomePreviewRecords.bind(client),
-                new FetchHomePreviewRecordsRequest());
+            const client = createClient(HomeClient);
+            const grpcResponse = await client.fetchHomePreviewRecords(new FetchHomePreviewRecordsRequest(), null);
 
             dispatch(
                 internalUpdateState({

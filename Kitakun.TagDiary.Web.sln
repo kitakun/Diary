@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.960
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30709.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kitakun.TagDiary.Web", "Kitakun.TagDiary.Web\Kitakun.TagDiary.Web.csproj", "{B01913DD-725A-4A3B-9E5A-E914BD3D14D3}"
 EndProject
@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kitakun.TagDiary.ViewModels
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalLogins", "ExternalLogins", "{967ABEDD-4D23-446D-B77C-59FD57A782CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kitakun.ExternalLogin.Vk", "Kitakun.ExternalLogin.Vk\Kitakun.ExternalLogin.Vk.csproj", "{3448D941-A285-42DC-B1F5-7739E6F8FCB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kitakun.ExternalLogin.Vk", "Kitakun.ExternalLogin.Vk\Kitakun.ExternalLogin.Vk.csproj", "{3448D941-A285-42DC-B1F5-7739E6F8FCB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kitakun.ExternalLogin.Abstraction", "Kitakun.ExternalLogin.Abstraction\Kitakun.ExternalLogin.Abstraction.csproj", "{D98DE10F-EEC9-4B9F-A0F3-68B15D585B60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kitakun.ExternalLogin.Abstraction", "Kitakun.ExternalLogin.Abstraction\Kitakun.ExternalLogin.Abstraction.csproj", "{D98DE10F-EEC9-4B9F-A0F3-68B15D585B60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

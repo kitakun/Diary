@@ -1,21 +1,88 @@
-import { dispatchStoreAction } from "store/base.store"
-import { ISpaceRecord } from "../../types"
+import { DiaryRecordClient } from "client/DiaryRecordServiceClientPb";
+import {
+    CreateNewRecordRequest,
+    DiaryRecordItem
+} from "client/diaryRecord_pb";
+import { Timestamp } from "google-protobuf/google/protobuf/timestamp_pb";
+// store
+import { dispatchStoreAction, ThunkResult } from "store/base.store"
+import { ICreateSpaceRecord, LoadingState } from "../../types"
 import * as actionTypes from "./record.actionTypes"
-import { RecordAction } from "./record.types"
+import { DispatchType, RecordAction, RecordsStateAction } from "./record.types"
+// locals
+import { createClient, delay } from "library/utils"
 
-export function createRecord(record: ISpaceRecord) {
+export function createRecord(record: ICreateSpaceRecord) {
     const action: RecordAction = {
         type: actionTypes.CREATE_NEW_RECORD,
         record,
     }
-debugger
+
+    return loadWelcomePreviews(action);
+}
+
+function internalUpdateState(newStateVals: Partial<RecordsStateAction>) {
+    const action: RecordsStateAction = {
+        type: actionTypes.INTERNAL_PART_UPDATE,
+        ...newStateVals
+    };
+
     return dispatchStoreAction(action);
 }
 
-// export function loadLastSpaces(action: SpaceAction) {
-//     return (dispatch: DispatchType) => {
-//         setTimeout(() => {
-//             dispatch(action)
-//         }, 500)
-//     }
-// }
+export function loadWelcomePreviews(action: RecordAction): ThunkResult<Promise<void>> {
+    dispatchStoreAction(action);
+    return async (dispatch: DispatchType) => {
+        dispatch(
+            internalUpdateState({
+                state: LoadingState.InLoading,
+            })
+        );
+        try {
+            await delay(2500);
+
+            createClient(DiaryRecordClient)
+
+            const grpcClient = createClient(DiaryRecordClient);
+
+            const recordToSend = new DiaryRecordItem();
+            const createdAtTimestamp = new Timestamp();
+            createdAtTimestamp.fromDate(action.record.createdAt!);
+            recordToSend
+                .setCreatedat(createdAtTimestamp)
+                .setMarkdown(action.record.markdownText)
+                .setShortdescription(action.record.shortDescription)
+                .setTagsList(action.record.selectedTags);
+
+            if (action.record.protectedByPassword) {
+                recordToSend
+                    .setProtectedbypassword(true)
+                    .setPassword(action.record.password!);
+            }
+
+            const request = new CreateNewRecordRequest();
+            request.setRecord(recordToSend);
+
+            const grpcResponse = await grpcClient.createNewRecord(request, null);
+            const response = grpcResponse.toObject();
+
+            if (response?.issuccess) {
+                dispatch(
+                    internalUpdateState({
+                        state: LoadingState.Loaded,
+                        records: [
+
+                        ]
+                    })
+                );
+            }
+        } catch (er) {
+            console.error(er);
+            dispatch(
+                internalUpdateState({
+                    state: LoadingState.Error,
+                })
+            );
+        }
+    }
+}

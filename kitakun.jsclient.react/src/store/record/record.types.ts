@@ -1,5 +1,5 @@
-import { IStoreAction } from 'store/base.store';
-import { ISpace, ISpaceRecord, LoadingState } from '../../types';
+import { EmitDispatchType, IStoreAction } from 'store/base.store';
+import { ICreateSpaceRecord, ISpaceRecord, LoadingState } from '../../types';
 
 export type RecordState = {
     state: LoadingState;
@@ -7,7 +7,14 @@ export type RecordState = {
 }
 
 export type RecordAction = IStoreAction & {
-    record: ISpaceRecord
+    type: string;
+    record: ICreateSpaceRecord
 }
 
-export type DispatchType = (args: RecordAction) => RecordAction;
+export type RecordsStateAction = Partial<RecordState> & IStoreAction & {
+    
+}
+
+export declare type RecordActionTypes = EmitDispatchType | RecordsStateAction | RecordAction;
+
+export type DispatchType = (args: RecordActionTypes) => RecordAction;

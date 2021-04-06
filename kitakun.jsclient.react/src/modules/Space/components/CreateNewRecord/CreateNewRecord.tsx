@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 // redux
 import { useDispatch } from 'react-redux';
 // Locals
-import { ICreateSpaceRecord, IReactPropType, ISpaceRecord } from 'types';
+import { ICreateSpaceRecord, IReactPropType } from 'types';
 import './CreateNewRecord.scss';
 // Components
 import Panel from 'library/common/Layout/Panel/Panel';
@@ -89,7 +89,6 @@ function CreateNewRecord(props: ICreateNewRecordProp) {
                             <div>
                                 <DatePicker className="form-control" selected={startDate} onChange={setDateAction} />
                             </div>
-                            {/* <input className="form-control" id="OnDate" name="OnDate" type="datetime-local" readOnly value="2021-01-19T00:00:00.000" /> */}
                         </div>
 
                         <div className="form-group">
