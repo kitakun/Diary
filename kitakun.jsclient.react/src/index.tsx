@@ -10,6 +10,7 @@ import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 // redux stores
 import spaceReducer from './store/space/space.reducer';
+import recordsReducer from './store/record/record.reducer';
 // Locals
 import App from './main/App';
 import { IRootStore } from 'types';
@@ -19,6 +20,7 @@ const customHistory = createBrowserHistory();
 const rootReducer = combineReducers<IRootStore>(
   {
     spaceStore: spaceReducer,
+    recordsStore: recordsReducer,
   });
 const reduxDevStore = composeWithDevTools(applyMiddleware(thunk));
 const rootStore = createStore(rootReducer, reduxDevStore);

@@ -8,7 +8,7 @@ import { Timestamp } from "google-protobuf/google/protobuf/timestamp_pb";
 import { dispatchStoreAction, ThunkResult } from "store/base.store"
 import { ICreateSpaceRecord, LoadingState } from "../../types"
 import * as actionTypes from "./record.actionTypes"
-import { DispatchType, RecordAction, RecordsStateAction } from "./record.types"
+import { DispatchType, RecordAction, RecordsStateAction, RecordStoreStates, StateAction } from "./record.types"
 // locals
 import { createClient, delay } from "library/utils"
 
@@ -30,14 +30,28 @@ function internalUpdateState(newStateVals: Partial<RecordsStateAction>) {
     return dispatchStoreAction(action);
 }
 
+function internalAddState(stateToAdd: RecordStoreStates) {
+    const action: StateAction = {
+        type: actionTypes.INTERNAL_ADD_STATE_IF_NO_EXISTS,
+        state: stateToAdd,
+    };
+
+    return dispatchStoreAction(action);
+}
+
+function internalRemoveState(stateToDel: RecordStoreStates) {
+    const action: StateAction = {
+        type: actionTypes.INTERNAL_Remove_STATE_IF_EXISTS,
+        state: stateToDel,
+    };
+
+    return dispatchStoreAction(action);
+}
+
 export function loadWelcomePreviews(action: RecordAction): ThunkResult<Promise<void>> {
     dispatchStoreAction(action);
     return async (dispatch: DispatchType) => {
-        dispatch(
-            internalUpdateState({
-                state: LoadingState.InLoading,
-            })
-        );
+        dispatch(internalAddState(RecordStoreStates.CreateNewRecord));
         try {
             await delay(2500);
 
@@ -67,22 +81,19 @@ export function loadWelcomePreviews(action: RecordAction): ThunkResult<Promise<v
             const response = grpcResponse.toObject();
 
             if (response?.issuccess) {
-                dispatch(
-                    internalUpdateState({
-                        state: LoadingState.Loaded,
-                        records: [
+                dispatch(internalRemoveState(RecordStoreStates.CreateNewRecord));
+                // dispatch(
+                //     internalUpdateState({
+                //         state: LoadingState.Loaded,
+                //         records: [
 
-                        ]
-                    })
-                );
+                //         ]
+                //     })
+                // );
             }
         } catch (er) {
             console.error(er);
-            dispatch(
-                internalUpdateState({
-                    state: LoadingState.Error,
-                })
-            );
+            dispatch(internalRemoveState(RecordStoreStates.CreateNewRecord));
         }
     }
 }

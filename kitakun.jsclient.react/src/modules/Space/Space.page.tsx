@@ -11,7 +11,6 @@ import DateDelimeter from './components/DateDelimeter/DateDelimeter';
 import RecordsGrid from './components/RecordsGrid/RecordsGrid';
 // import RecordView from '../../library/components/RecordView/RecordView';
 // import DialogRecordView from './dialogs/DialogRecordView/DialogRecordView';
-import { createRecord } from 'store/record/record.actionCreators';
 
 // interface ISpaceRouteParams {
 //     spaceId: string;
@@ -22,7 +21,7 @@ function SpacePage(props: IReactPropPageType) {
     const date = new Date();
     return (
         <Container>
-            <CreateNewRecord createNewRecord={createRecord}></CreateNewRecord>
+            <CreateNewRecord></CreateNewRecord>
             <DateDelimeter date={date}></DateDelimeter>
             <RecordsGrid match={props.match}></RecordsGrid>
             {/* <NoRecords date={date}></NoRecords> */}
